@@ -1,0 +1,44 @@
+{% extends 'console/admin-index.html' %}
+{% block title %}后台管理-Markdown编辑器{% endblock %}
+{% block link %}
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'console/markdown_editor/css/editormd.css' %}"/>
+{% endblock %}
+{% block content %}
+    <!-- content start -->
+    <div class="am-margin">
+        <button type="button" class="am-btn am-btn-primary am-btn-xs">提交保存</button>
+        <button type="button" class="am-btn am-btn-primary am-btn-xs">放弃保存</button>
+    </div>
+    <div class="markdown-content">
+
+        <div id="test-editormd">
+            <textarea style="display:none;"></textarea>
+        </div>
+        {% load staticfiles %}
+        <script src="{% static 'console/markdown_editor/js/jquery.min.js' %}"></script>
+        <script src="{% static 'console/markdown_editor/js/editormd.min.js' %}"></script>
+        <script type="text/javascript">
+            var testEditor;
+            $(function () {
+                testEditor = editormd("test-editormd", {
+                    width: "100%",
+                    height: 650,
+                    path: "{% static 'console/markdown_editor/lib/' %}",
+                    // theme: "dark",
+                    // previewTheme: "dark",
+                    // editorTheme: "pastel-on-dark",
+                    codeFold: true,
+                    saveHTMLToTextarea: true,
+                    searchReplace: true,
+                    taskList: true,
+                    tocm: true,
+                    imageUpload: true,
+                    imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                    imageUploadURL: "{% url 'console:upload_image' %}",
+                });
+            });
+        </script>
+    </div>
+    <!--content end-->
+{% endblock %}

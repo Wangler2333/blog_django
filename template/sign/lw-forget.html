@@ -1,0 +1,43 @@
+{% extends 'sign/lw-log.html' %}
+
+{% block title %}
+    LeeBlog 忘记密码
+{% endblock %}
+
+{% block button %}
+    <a href="{% url 'sign:login' %}">
+        <button type="button" class="am-btn am-btn-default am-radius log-button">登 录</button>
+    </a>
+    <a href="{% url 'sign:register' %}">
+        <button type="button" class="am-btn am-btn-default am-radius log-button">注 册</button>
+    </a>
+{% endblock %}
+
+{% block content %}
+    <div class="log">
+        <div class="am-g">
+            <div class="am-u-lg-3 am-u-md-6 am-u-sm-8 am-u-sm-centered log-content">
+                <h1 class="log-title am-animation-slide-top">忘记密码</h1>
+                <br>
+                <form class="am-form" id="log-form" method="post" action="{% url 'sign:forget' %}">
+                    {% csrf_token %}
+                    <div class="am-input-group am-radius am-animation-slide-left">
+                        <input type="email" name="email" id="doc-vld-email-2-1" class="am-radius" data-validation-message="请输入正确邮箱地址"
+                               placeholder="邮箱" required/>
+                        <span class="am-input-group-label log-icon am-radius"><i
+                                class="am-icon-user am-icon-sm am-icon-fw"></i></span>
+                    </div>
+                    <br>
+                    <button type="submit"
+                            class="am-btn am-btn-primary am-btn-block am-btn-lg am-radius am-animation-slide-bottom log-animation-delay-b">
+                        提 交
+                    </button>
+                    <br>
+                </form>
+            </div>
+        </div>
+        <footer class="log-footer">
+            © 2014 AllMobilize, Inc. Licensed under MIT license.
+        </footer>
+    </div>
+{% endblock %}

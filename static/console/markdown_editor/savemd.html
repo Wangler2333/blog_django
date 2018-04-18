@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="zh">
+<head>
+    <meta charset="utf-8"/>
+    <title>Simple example - Editor.md examples</title>
+    <link rel="stylesheet" href="{% static 'markdown_editor/css/editormd.css' %}"/>
+    <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon"/>
+</head>
+<body>
+{% csrf_token %}
+<div id="layout">
+    <header>
+        <h1>Simple example</h1>
+    </header>
+    <div id="btns">
+        <button id="get-md-btn">Get Markdown</button>
+        <button id="get-html-btn">Get HTML</button>
+        <button id="save">保存</button>
+        <button id="submit">发布</button>
+    </div>
+    <div id="test-editormd">
+        <textarea style="display:none;"></textarea>
+    </div>
+</div>
+<script src="{% static 'markdown_editor/js/jquery.min.js' %}"></script>
+<script src="{% static 'markdown_editor/js/editormd.min.js' %}"></script>
+<script type="text/javascript">
+    var testEditor;
+    $(function () {
+        testEditor = editormd("test-editormd", {
+            width: "90%",
+            height: 740,
+            path: "{% static 'markdown_editor/lib/' %}",
+            theme: "dark",
+            previewTheme: "dark",
+            editorTheme: "pastel-on-dark",
+            codeFold: true,
+            saveHTMLToTextarea: true,
+            searchReplace: true,
+            taskList: true,
+            tocm: true,
+            imageUpload: true,
+            imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+            imageUploadURL: "{% url 'mdedit:upload_image' %}",
+        });
+    });
+
+    var get_html = document.getElementById('get-html-btn');
+    var get_md = document.getElementById('get-md-btn');
+    var save = document.getElementById('save');
+    var submit = document.getElementById('submit');
+    var csrf = document.querySelector('input[type="hidden"]')
+
+    var funDownload = function (content, filename) {
+        var eleLink = document.createElement('a');
+        eleLink.download = filename;
+        eleLink.style.display = 'none';
+        // 字符内容转变成blob地址
+        var blob = new Blob([content]);
+        eleLink.href = URL.createObjectURL(blob);
+        // 触发点击
+        document.body.appendChild(eleLink);
+        eleLink.click();
+        // 然后移除
+        document.body.removeChild(eleLink);
+    };
+
+    if ('download' in document.createElement('a')) {
+        // 作为test.html文件下载
+        get_html.addEventListener('click', function () {
+            funDownload(testEditor.getHTML(), 'test.html');
+        });
+    } else {
+        get_html.onclick = function () {
+            alert('浏览器不支持');
+        };
+    }
+
+    if ('download' in document.createElement('a')) {
+        // 作为test.html文件下载
+        get_md.addEventListener('click', function () {
+            funDownload(testEditor.getMarkdown(), 'test.md');
+        });
+    } else {
+        get_md.onclick = function () {
+            alert('浏览器不支持');
+        };
+    }
+
+    save.addEventListener('click', function () {
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'mdedit:savemd' %}",
+            data: {csrfmiddlewaretoken: csrf.value, md: testEditor.getMarkdown()},
+            dataType: 'json',
+        });
+    });
+
+    submit.addEventListener('click', function () {
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'mdedit:submitmd' %}",
+            data: {csrfmiddlewaretoken: csrf.value, md: testEditor.getMarkdown()},
+            dataType: 'json',
+        });
+    });
+</script>
+</body>
+</html>
