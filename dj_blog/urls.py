@@ -25,4 +25,6 @@ urlpatterns = [
                   url(r'^sign/', include('apps.blog_sign.urls', namespace='sign')),
                   url(r'^article/', include('apps.blog_article.urls', namespace='article')),
                   url(r'^console/', include('apps.blog_console.urls', namespace='console')),
-              ] + static(settings.MEDIA_DIR, document_root=settings.MEDIA_DIR)  # 添加media的url路径
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # 添加media的url路径

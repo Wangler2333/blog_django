@@ -1,6 +1,6 @@
 {% extends 'sign/lw-log.html' %}
 {% block title %}
-    LeeBlog 错误
+    LeeBlog 提示
 {% endblock %}
 
 {% block button %}
@@ -16,10 +16,10 @@
     <div class="log">
         <div class="am-g">
             <div class="am-u-lg-3 am-u-md-6 am-u-sm-8 am-u-sm-centered log-content">
-                <h1 class="log-title am-animation-slide-top">{{ error }}</h1>
+                <h1 class="am-animation-slide-top" style="margin-top: 200px">{{ error }}</h1>
                 <br>
                 {% if error == '邮箱未激活' %}
-                    <a href="{% url 'sign:register' %}">
+                    <a href="{% url 'sign:sendemail' %}">
                         <button type="button" class="am-btn am-btn-default am-radius log-button">激活邮箱</button>
                     </a>
                 {% endif %}

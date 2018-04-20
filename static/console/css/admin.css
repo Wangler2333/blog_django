@@ -67,7 +67,7 @@ ul {
 
 .admin-content {
   width: auto;
-  overflow: hidden;
+  overflow: auto;
   height: 100%;
   background: #fff;
 }

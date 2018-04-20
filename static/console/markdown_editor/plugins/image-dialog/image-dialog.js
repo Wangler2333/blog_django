@@ -52,7 +52,7 @@
                                         "<input type=\"text\" data-url />" + (function(){
                                             return (settings.imageUpload) ? "<div class=\"" + classPrefix + "file-input\">" +
                                                                                 "<input type=\"file\" name=\"" + classPrefix + "image-file\" accept=\"image/*\" />" +
-                                                                                "<input type=\"submit\" value=\"" + imageLang.uploadButton + "\" />" +
+                                                                                "<input type=\"submit\" value=\"" + imageLang.uploadButton + "\" />" + settings.imageUpload +
                                                                             "</div>" : "";
                                         })() +
                                         "<br/>" +

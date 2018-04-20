@@ -1,4 +1,4 @@
-{% extends 'console/admin-index.html' %}
+{% extends 'console/base_admin.html' %}
 {% block title %}后台管理-个人信息{% endblock %}
 {% block content %}
   <!-- content start -->
@@ -58,7 +58,7 @@
           <div class="am-form-group">
             <label for="user-name" class="am-u-sm-3 am-form-label">姓名 / Name</label>
             <div class="am-u-sm-9">
-              <input type="password" id="user-name" placeholder="姓名 / Name">
+              <input type="text" id="user-name" placeholder="姓名 / Name">
               <small>输入你的名字，让我们记住你。</small>
             </div>
           </div>

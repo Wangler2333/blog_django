@@ -1,22 +1,49 @@
-{% extends 'console/admin-index.html' %}
+{% extends 'console/base_admin.html' %}
 {% block title %}后台管理-Markdown编辑器{% endblock %}
 {% block link %}
     {% load staticfiles %}
     <link rel="stylesheet" href="{% static 'console/markdown_editor/css/editormd.css' %}"/>
+    <script src="{% static 'console/markdown_editor/js/jquery.min.js' %}"></script>
+    <script type="text/javascript">
+        function login() {
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{% url 'console:form' %}",
+                data: $('#markdown_form').serialize(),
+                success: function (result) {
+                    if (result.resultCode == 200) {
+                        alert("保存成功！");
+                    }
+                },
+                error: function () {
+                    alert("保存异常！");
+                }
+            });
+        }
+    </script>
 {% endblock %}
 {% block content %}
     <!-- content start -->
-    <div class="am-margin">
-        <button type="button" class="am-btn am-btn-primary am-btn-xs">提交保存</button>
-        <button type="button" class="am-btn am-btn-primary am-btn-xs">放弃保存</button>
-    </div>
-    <div class="markdown-content">
+    <div class="markdown-content am-form am-form-horizontal">
+        <form id="markdown_form" method="post" action="{% url 'console:form' %}">
+            {% csrf_token %}
+            <div class="am-margin">
+                <button type="submit" name="submit" value="True"
+                        class="am-btn am-btn-primary am-btn-xs">发布
+                </button>
+                <button type="button" onclick="login()" name="save" value="True"
+                        class="am-btn am-btn-primary am-btn-xs">保存
+                </button>
+                <input type="text" name="title" placeholder="请输入标题（30字以内）">
+            </div>
 
-        <div id="test-editormd">
-            <textarea style="display:none;"></textarea>
-        </div>
+            <div id="test-editormd">
+                <textarea style="display:none;"></textarea>
+            </div>
+        </form>
         {% load staticfiles %}
-        <script src="{% static 'console/markdown_editor/js/jquery.min.js' %}"></script>
+{#        <script src="{% static 'console/markdown_editor/js/jquery.min.js' %}"></script>#}
         <script src="{% static 'console/markdown_editor/js/editormd.min.js' %}"></script>
         <script type="text/javascript">
             var testEditor;
@@ -33,7 +60,11 @@
                     searchReplace: true,
                     taskList: true,
                     tocm: true,
-                    imageUpload: true,
+
+                    {# imageUpload参数在console/markdown_editor/plugins/image-dialog/image-dialog.js文件中进行if判断 #}
+                    {# 利用其传参特性将csrf_token传入image-dialog.js文件进行form表单生成 #}
+                    imageUpload: "{% csrf_token %}",
+
                     imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
                     imageUploadURL: "{% url 'console:upload_image' %}",
                 });

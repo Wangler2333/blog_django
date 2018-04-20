@@ -19,7 +19,7 @@
             <div class="am-u-lg-3 am-u-md-6 am-u-sm-8 am-u-sm-centered log-content">
                 <h1 class="log-title am-animation-slide-top">忘记密码</h1>
                 <br>
-                <form class="am-form" id="log-form" method="post" action="{% url 'sign:forget' %}">
+                <form class="am-form" id="log-form" method="post">
                     {% csrf_token %}
                     <div class="am-input-group am-radius am-animation-slide-left">
                         <input type="email" name="email" id="doc-vld-email-2-1" class="am-radius" data-validation-message="请输入正确邮箱地址"

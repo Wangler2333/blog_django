@@ -109,9 +109,13 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 MEDIA_URL = '/media/'
 # 添加media文件夹
 MEDIA_DIR = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = MEDIA_DIR
 
 # 继承重写User模型类时，指定自定义的模型类，'app名字.类名'
 AUTH_USER_MODEL = 'blog_sign.User'
+
+# 配置登录界面，供登录验证装饰器login_required使用
+LOGIN_URL = '/sign/login'
 
 # 发送邮件配置
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
