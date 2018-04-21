@@ -1,0 +1,14 @@
+/*
+body居中
+ */
+
+#body {
+width:50em;  
+position:absolute;  
+right:25%;
+left:25%;
+top:15%;
+background-color:red;
+
+}
+

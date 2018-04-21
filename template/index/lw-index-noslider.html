@@ -28,7 +28,6 @@
 <header class="am-g am-g-fixed blog-fixed blog-text-center blog-header">
     <div class="am-u-sm-8 am-u-sm-centered">
         <img width="200" src="http://s.amazeui.org/media/i/brand/amazeui-b.png" alt="Amaze UI Logo"/>
-        <h2 class="am-hide-sm-only">中国首个开源 HTML5 跨屏前端框架</h2>
     </div>
 </header>
 <hr>
@@ -39,10 +38,10 @@
 
     <div class="am-collapse am-topbar-collapse" id="blog-collapse">
         <ul class="am-nav am-nav-pills am-topbar-nav">
-            <li class="am-active"><a href="lw-index.html">首页</a></li>
+            <li><a href="/index/">首页</a></li>
             <li><a href="lw-img.html">图片库</a></li>
-            <li><a href="lw-article.html">个人中心</a></li>
-            <li><a href="lw-article-fullwidth.html">注销</a></li>
+            <li><a href="{% url 'console:table' %}">个人中心</a></li>
+            <li><a href="lw-article-fullwidth.html">注销:{{ user_info.name }}</a></li>
         </ul>
         <form class="am-topbar-form am-topbar-right am-form-inline" role="search">
             <div class="am-form-group">
@@ -64,10 +63,10 @@
 {#            </div>#}
             <div class="am-u-lg-6 am-u-md-12 am-u-sm-12 blog-entry-text" style="width: 100%">
                 <span><a href="" class="blog-color">{{ article.user }} &nbsp;</a></span>
-                <span> @{{ name }} &nbsp;</span>
+                <span> @{{ user_info.name }} &nbsp;</span>
                 <span>{{ article.update_time }}</span>
-                <h1><a href="">{{ article.title }}</a></h1>
-                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ article.article|striptags|truncatewords:"20"  }}
+                <h1><a href="/article/{{ article.markdown_id }}">{{ article.title }}</a></h1>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ article.article|striptags|truncatewords:"15"  }}
                 </p>
                 <p><a href="" class="blog-continue">continue reading</a></p>
             </div>
@@ -84,11 +83,11 @@
         <div class="blog-sidebar-widget blog-bor">
             <h2 class="blog-text-center blog-title"><span>About ME</span></h2>
             <img src="assets/i/f14.jpg" alt="about me" class="blog-entry-img">
-            <p>妹纸</p>
+            <p>{{ user_info.name }}</p>
             <p>
-                我是妹子UI，中国首个开源 HTML5 跨屏前端框架
+                我是{{ user_info.name }}
             </p>
-            <p>我不想成为一个庸俗的人。十年百年后，当我们死去，质疑我们的人同样死去，后人看到的是裹足不前、原地打转的你，还是一直奔跑、走到远方的我？</p>
+            <p>{{ user_info.introduction }}</p>
         </div>
         <div class="blog-sidebar-widget blog-bor">
             <h2 class="blog-text-center blog-title"><span>Contact ME</span></h2>
@@ -162,15 +161,7 @@
 </footer>
 
 
-<!--[if (gte IE 9)|!(IE)]><!-->
 <script src="{% static 'index/assets/js/jquery.min.js' %}"></script>
-<!--<![endif]-->
-<!--[if lte IE 8 ]>
-<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
-<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
-<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
-<![endif]-->
 <script src="{% static 'index/assets/js/amazeui.min.js' %}"></script>
-<!-- <script src="assets/js/app.js"></script> -->
 </body>
 </html>

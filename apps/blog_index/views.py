@@ -6,8 +6,11 @@ from apps.blog_sign.models import User
 
 
 # Create your views here.
+def index(request):
+    return render(request, 'index/lw-index-noslider-b.html')
 
-def index(request, user_id):
+
+def user_index(request, user_id):
     user_login = request.user
     if user_login.is_authenticated():
         if not user_id:
@@ -18,8 +21,10 @@ def index(request, user_id):
         return redirect('sign:login')
     user = User.objects.get(id=user_id)
     try:
-        name = user.userinfo.name
+        user_info = user.userinfo
     except:
-        name = '╮(￣▽￣)╭@'
-    articles_html = user.bloghtml_set.all()
-    return render(request, 'index/lw-index-noslider.html', {'articles_html': articles_html, 'name':name})
+        user_info = dict()
+        user_info['name'] = '没有名字...'
+        user_info['introduction'] = '还没有介绍自己...'
+    articles_html = user.bloghtml_set.all().order_by('-create_time')
+    return render(request, 'index/lw-index-noslider.html', {'articles_html': articles_html, 'user_info': user_info})
