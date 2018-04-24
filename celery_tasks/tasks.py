@@ -2,7 +2,7 @@ from celery import Celery
 from dj_blog import settings
 from django.core.mail import send_mail
 
-app = Celery('celery_tasks.tasks', broker='redis://127.0.0.1:6379/8')
+app = Celery('celery_tasks.tasks', broker='redis://:624695549@106.14.1.9:6379/8')
 
 # 在任务处理者一端加这几句
 import os

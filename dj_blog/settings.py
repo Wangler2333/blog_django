@@ -80,8 +80,12 @@ WSGI_APPLICATION = 'dj_blog.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'blog_django',
+        'HOST': '106.14.1.9',
+        'PORT': 3306,
+        'USER': 'liduo',
+        'PASSWORD': '624695549'
     }
 }
 
@@ -128,3 +132,18 @@ EMAIL_HOST_USER = 'liduo945@163.com'
 EMAIL_HOST_PASSWORD = 'liduo945163'
 # 收件人看到的发件人
 EMAIL_FROM = 'LeeBlog<liduo945@163.com>'
+
+# Django的缓存配置
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://:624695549@106.14.1.9:6379/9",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+# 配置session存储
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"

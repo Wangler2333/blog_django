@@ -16,7 +16,7 @@ class User(AbstractUser, BaseModel):
 
 
 class UserInfo(BaseModel):
-    user = models.OneToOneField(User, verbose_name='用户名')
+    user = models.OneToOneField(User, verbose_name='用户名', on_delete=models.CASCADE)
     qq_id = models.CharField(max_length=15, verbose_name='QQ账号')
     wechat_id = models.CharField(max_length=50, verbose_name='微信账号')
     github_id = models.CharField(max_length=50, verbose_name='GitHub账号')

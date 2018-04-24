@@ -97,30 +97,28 @@ def upload_image(request):
     if request.method == "POST":
 
         # 获取上传的文件，如果没有文件，则默认为None
-        _file = request.FILES.get("editormd-image-file", None)
-        if not _file:
-            return HttpResponse(json.dumps({'success': 0, 'message': 'upload image failed'}, ensure_ascii=False),
-                                content_type="application/json")
+        pic = request.FILES.get("editormd-image-file", None)
+        if not pic:
+            return JsonResponse({'success': 0, 'message': 'upload image failed'})
 
-        media_root = settings.MEDIA_DIR
-        strs = _file.name.split('.')
-        suffix = strs[-1]
-        file_name = strs[0]
-        now_time = str(int(time.time() * 1000))
-        file_name = file_name.replace('(', '[').replace(')', ']')
-        image_floder = os.path.join(media_root, 'image')
+        media_dir = settings.MEDIA_DIR
+        pic_strs = pic.name.split('.')
+        pic_suffix = pic_strs[-1]
+        pic_name = pic_strs[0]
+        pic_name = pic_name.replace('(', '[').replace(')', ']')
+        image_floder = os.path.join(media_dir, 'image')
         if not os.path.exists(image_floder):
             os.makedirs(image_floder)
 
-        image_name = file_name + "_" + now_time + "." + suffix
+        image_name = pic_name + "_" + "." + pic_suffix
         count = 1
         while os.path.exists(os.path.join(image_floder, image_name)):
-            image_name = file_name + "_" + now_time + "[" + str(count) + "]." + suffix
+            image_name = pic_name + "_" + "[" + str(count) + "]." + pic_suffix
             count += 1
 
         file_dir = os.path.join(image_floder, image_name)
         destination = open(file_dir, 'wb+')
-        for chunk in _file.chunks():
+        for chunk in pic.chunks():
             destination.write(chunk)
         destination.close()
         return HttpResponse(json.dumps({'success': 1, 'message': 'upload image successed',

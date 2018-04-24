@@ -8,7 +8,7 @@ import os
 # Create your models here.
 
 class BlogMarkdown(BaseModel):
-    user = models.ForeignKey(User, verbose_name='作者')
+    user = models.ForeignKey(User, verbose_name='作者', on_delete=models.CASCADE)
     title = models.CharField(max_length=30, verbose_name='标题')
     article = models.TextField(verbose_name='文章')
 
@@ -23,10 +23,10 @@ class BlogMarkdown(BaseModel):
 
 
 class BlogHtml(BaseModel):
-    user = models.ForeignKey(User, verbose_name='作者')
+    user = models.ForeignKey(User, verbose_name='作者', on_delete=models.CASCADE)
     title = models.CharField(max_length=30, verbose_name='标题')
     article = models.TextField(verbose_name='文章')
-    markdown = models.OneToOneField(BlogMarkdown, verbose_name='markdown文章ID')
+    markdown = models.OneToOneField(BlogMarkdown, verbose_name='markdown文章ID', on_delete=models.CASCADE)
 
     def __str__(self):
         s = '【' + str(self.user_id) + '】' + self.title
@@ -39,8 +39,8 @@ class BlogHtml(BaseModel):
 
 
 class BlogImage(BaseModel):
-    user = models.ForeignKey(User, verbose_name='作者')
-    article = models.ForeignKey(BlogMarkdown, null=True, blank=True, verbose_name='所属文章')
+    user = models.ForeignKey(User, verbose_name='作者', on_delete=models.CASCADE)
+    article = models.ForeignKey(BlogMarkdown, null=True, blank=True, verbose_name='所属文章', on_delete=models.CASCADE)
     title = models.CharField(max_length=30, verbose_name='描述')
     image = models.ImageField(upload_to='image', verbose_name='图片')
 
