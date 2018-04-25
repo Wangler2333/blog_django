@@ -2,8 +2,8 @@
 {% block title %}后台管理-Markdown编辑器{% endblock %}
 {% block link %}
     {% load staticfiles %}
-    <link rel="stylesheet" href="{% static 'console/markdown_editor/css/editormd.css' %}"/>
-    <script src="{% static 'console/markdown_editor/js/jquery.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'markdown_editor/css/editormd.css' %}"/>
+    <script src="{% static 'markdown_editor/js/editormd.min.js' %}"></script>
     <script type="text/javascript">
         function login() {
             $.ajax({
@@ -43,15 +43,13 @@
             </div>
         </form>
         {% load staticfiles %}
-{#        <script src="{% static 'console/markdown_editor/js/jquery.min.js' %}"></script>#}
-        <script src="{% static 'console/markdown_editor/js/editormd.min.js' %}"></script>
         <script type="text/javascript">
             var testEditor;
             $(function () {
                 testEditor = editormd("test-editormd", {
                     width: "100%",
                     height: 650,
-                    path: "{% static 'console/markdown_editor/md_lib/' %}",
+                    path: "{% static 'markdown_editor/md_lib/' %}",
                     // theme: "dark",
                     // previewTheme: "dark",
                     // editorTheme: "pastel-on-dark",

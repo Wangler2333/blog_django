@@ -10,22 +10,22 @@
     <title>{{ article_html.title }} - LeeBlog</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
-    <link rel="icon" type="image/png" href="{% static 'article/assets/i/favicon.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'i/favicon.png' %}">
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="icon" sizes="192x192" href="{% static 'article/assets/i/app-icon72x72@2x.png' %}">
+    <link rel="icon" sizes="192x192" href="{% static 'i/app-icon72x72@2x.png' %}">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
-    <link rel="apple-touch-icon-precomposed" href="{% static 'article/assets/i/app-icon72x72@2x.png' %}">
+    <link rel="apple-touch-icon-precomposed" href="{% static 'i/app-icon72x72@2x.png' %}">
     <meta name="msapplication-TileImage" content="assets/i/app-icon72x72@2x.png">
     <meta name="msapplication-TileColor" content="#0e90d2">
-    <link rel="stylesheet" href="{% static 'article/assets/css/amazeui.min.css' %}">
-    <link rel="stylesheet" href="{% static 'article/assets/css/app.css' %}">
+    <link rel="stylesheet" href="{% static 'css/amazeui.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
     {# markdown-body区域的css样式 #}
-    <link rel="stylesheet" href="{% static 'article/markdown/markdown-body.css' %}">
+    <link rel="stylesheet" href="{% static 'markdown_article/markdown-body.css' %}">
     {# highlight.js代码高亮 #}
-    <link rel="stylesheet" href="{% static 'article/markdown/styles/github.css' %}">
-    <script src="{% static 'article/markdown/highlight.pack.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'markdown_article/styles/github.css' %}">
+    <script src="{% static 'markdown_article/highlight.pack.js' %}"></script>
     <script>hljs.initHighlightingOnLoad();</script>
 </head>
 
@@ -175,7 +175,7 @@
 </footer>
 
 
-<script src="{% static 'article/' %}assets/js/jquery.min.js"></script>
-<script src="{% static 'article/' %}assets/js/amazeui.min.js"></script>
+<script src="{% static '/js/jquery.min.js' %}"></script>
+<script src="{% static 'js/amazeui.min.js' %}"></script>
 </body>
 </html>

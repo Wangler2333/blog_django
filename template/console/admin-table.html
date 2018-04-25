@@ -22,6 +22,33 @@
                     }
                 });
             });
+
+            // 文章的全选和全不选
+            $('.article_form_title').find(':checkbox').change(function () {
+                // 获取全选的checkbox的选中状态
+                var is_checked = $(this).prop('checked');
+                // 遍历商品的对应的checkbox，设置这些checkbox的选中状态和全选的checkbox保持一致
+                $('.article_list_body').find(':checkbox').each(function () {
+                    $(this).prop('checked', is_checked);
+                });
+                // 更新页面的信息
+                update_page_info();
+            });
+
+            // 文章对应的checkbox状态发生改变时，设置全选checkbox的状态
+            $('.article_list_body').find(':checkbox').change(function () {
+                // 获取页面上所有商品的数目
+                var all_len = $('.article_list_body').find(':checkbox').length;
+                // 获取页面上被选中的商品的数目
+                var checked_len = $('.article_list_body').find(':checked').length;
+                var is_checked = true;
+                if (checked_len < all_len) {
+                    is_checked = false;
+                }
+                $('.article_form_title').find(':checkbox').prop('checked', is_checked);
+                // 更新页面的信息
+                update_page_info();
+            });
         });
     </script>
 {% endblock %}
@@ -464,35 +491,4 @@
         </div>
     </div>
     <!-- content end -->
-{% endblock %}
-{% block script %}
-    <script>
-        // 文章的全选和全不选
-        $('.article_form_title').find(':checkbox').change(function () {
-            // 获取全选的checkbox的选中状态
-            var is_checked = $(this).prop('checked');
-            // 遍历商品的对应的checkbox，设置这些checkbox的选中状态和全选的checkbox保持一致
-            $('.article_list_body').find(':checkbox').each(function () {
-                $(this).prop('checked', is_checked);
-            });
-            // 更新页面的信息
-            update_page_info();
-        });
-
-        // 文章对应的checkbox状态发生改变时，设置全选checkbox的状态
-        $('.article_list_body').find(':checkbox').change(function () {
-            // 获取页面上所有商品的数目
-            var all_len = $('.article_list_body').find(':checkbox').length;
-            // 获取页面上被选中的商品的数目
-            var checked_len = $('.article_list_body').find(':checked').length;
-            var is_checked = true;
-            if (checked_len < all_len) {
-                is_checked = false;
-            }
-            $('.article_form_title').find(':checkbox').prop('checked', is_checked);
-            // 更新页面的信息
-            update_page_info();
-        });
-
-    </script>
 {% endblock %}
