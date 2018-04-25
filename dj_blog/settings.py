@@ -108,6 +108,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 # 添加静态文件路径
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'statics')
 
 # 设置media文件夹url
 MEDIA_URL = '/media/'

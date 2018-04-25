@@ -15,16 +15,18 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.conf.urls.static import static
 from dj_blog import settings
 
 urlpatterns = [
-                  url(r'^admin/', include(admin.site.urls)),
-                  # 设置各个APP的url路径
-                  url(r'^index/', include('apps.blog_index.urls', namespace='index')),
-                  url(r'^sign/', include('apps.blog_sign.urls', namespace='sign')),
-                  url(r'^article/', include('apps.blog_article.urls', namespace='article')),
-                  url(r'^console/', include('apps.blog_console.urls', namespace='console')),
-              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    url(r'^admin/', include(admin.site.urls)),
+    # 添加static文件夹和media文件夹的路径
+    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
+    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+    # 设置各个APP的url路径
+    url(r'^index/', include('apps.blog_index.urls', namespace='index')),
+    url(r'^sign/', include('apps.blog_sign.urls', namespace='sign')),
+    url(r'^article/', include('apps.blog_article.urls', namespace='article')),
+    url(r'^console/', include('apps.blog_console.urls', namespace='console')),
+]
 
-# static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # 添加media的url路径
+# urlpatterns += static(settings.MEDIA_DIR, document_root=settings.MEDIA_ROOT)  # 另一种添加media的路径的方法

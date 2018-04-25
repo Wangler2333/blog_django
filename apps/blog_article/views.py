@@ -22,12 +22,10 @@ def article_id(request, article):
     user_articles = article_html.user.bloghtml_set.order_by('markdown_id')
     try:
         article_prev = user_articles.filter(markdown_id__lt=article).order_by('-markdown_id')[0]
-        print(111, article_prev.markdown_id)
     except:
         article_prev = None
     try:
         article_next = user_articles.filter(markdown_id__gt=article)[0]
-        print(222, article_next.markdown_id)
     except:
         article_next = None
     try:
