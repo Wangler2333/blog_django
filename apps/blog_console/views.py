@@ -5,12 +5,13 @@ import json
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest, JsonResponse, Http404
 from django.views.generic import View
-from apps.blog_console.models import BlogMarkdown, BlogHtml
+from apps.blog_console.models import BlogMarkdown, BlogHtml, BlogImage
 from django.contrib.auth.decorators import login_required
 from utils.mixin import LoginRequiredMixin
 from django.db.models import Max
 from dj_blog import settings
 from fdfs_client.client import Fdfs_client
+import re
 
 
 # Create your views here.
@@ -62,6 +63,15 @@ def save_html(article_id, title, html_code, user_login):
     return JsonResponse({'resultCode': 200})
 
 
+def article_image(article_id, html_code, user_login):
+    images = re.findall(r'\"%s(.+?)\"' % settings.FDFS_URL, html_code)
+    for image_name in images:
+        blog_images = BlogImage.objects.filter(image=image_name, user=user_login)
+        for blog_image in blog_images:
+            blog_image.article_id = article_id
+            blog_image.save()
+
+
 class FormView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest):
         # 新建一个文章编号，暂定使用blog_markdown表的id作为article_id
@@ -98,6 +108,7 @@ class FormView(LoginRequiredMixin, View):
         if submit:
             save_markdown(article_id, title, markdown_doc, user_login)
             save_html(article_id, title, html_code, user_login)
+            article_image(article_id, html_code, user_login)
             return HttpResponse('已发布')
         # 若没有submit键，则为保存内容
         else:
@@ -121,7 +132,6 @@ def upload_image(request):
 
         # 上传文件到fast dfs系统中
         res = client.upload_by_buffer(pic.read())
-        print(res)
 
         # dict
         # {
@@ -138,6 +148,14 @@ def upload_image(request):
 
         # 获取返回的文件ID
         filename = res.get('Remote file_id')
+
+        blog_image = BlogImage()
+        blog_image.image = filename
+        blog_image.title = pic.name
+        blog_image.user = request.user
+        blog_image.save()
+
+        print(blog_image.image.url)
 
         return JsonResponse({'success': 1, 'message': 'upload image successed',
                              'url': settings.FDFS_URL + filename})

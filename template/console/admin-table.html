@@ -1,8 +1,34 @@
 {% extends 'console/base_admin.html' %}
 {% block title %}后台管理-文章列表{% endblock %}
+{% block link %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("button").click(function () {
+                var text = $(this).text();
+                var name = $(this).prop('name');
+                var csrf = $('input[name="csrfmiddlewaretoken"]').prop('value');
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "{% url 'console:table' %}",
+                    data: {'csrfmiddlewaretoken': csrf, 'text': text, 'name': name},
+                    success: function (result) {
+                        if (result.resultCode == 200) {
+                            alert(text + "成功！");
+                        }
+                    },
+                    error: function () {
+                        alert(text + "异常！" + name);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
 {% block content %}
     <!-- content start -->
     {% load staticfiles %}
+    {% csrf_token %}
     <div class="admin-content">
 
         <div class="am-cf am-padding">
@@ -16,7 +42,8 @@
                 <div class="am-fl am-cf">
                     <div class="am-btn-toolbar am-fl">
                         <div class="am-btn-group am-btn-group-xs">
-                            <button type="button" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增
+                            <button type="button" name="111" class="am-btn am-btn-default"><span
+                                    class="am-icon-plus"></span> 新增
                             </button>
                             <button type="button" class="am-btn am-btn-default"><span class="am-icon-save"></span> 保存
                             </button>
@@ -56,7 +83,7 @@
             <div class="am-u-sm-12">
                 <form class="am-form">
                     <table class="am-table am-table-striped am-table-hover table-main">
-                        <thead>
+                        <thead class="article_form_title">
                         <tr>
                             <th class="table-check"><input type="checkbox"/></th>
                             <th class="table-id">ID</th>
@@ -67,7 +94,7 @@
                             <th class="table-set">操作</th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="article_list_body">
                         <tr>
                             <td><input type="checkbox"/></td>
                             <td>1</td>
@@ -437,4 +464,35 @@
         </div>
     </div>
     <!-- content end -->
+{% endblock %}
+{% block script %}
+    <script>
+        // 文章的全选和全不选
+        $('.article_form_title').find(':checkbox').change(function () {
+            // 获取全选的checkbox的选中状态
+            var is_checked = $(this).prop('checked');
+            // 遍历商品的对应的checkbox，设置这些checkbox的选中状态和全选的checkbox保持一致
+            $('.article_list_body').find(':checkbox').each(function () {
+                $(this).prop('checked', is_checked);
+            });
+            // 更新页面的信息
+            update_page_info();
+        });
+
+        // 文章对应的checkbox状态发生改变时，设置全选checkbox的状态
+        $('.article_list_body').find(':checkbox').change(function () {
+            // 获取页面上所有商品的数目
+            var all_len = $('.article_list_body').find(':checkbox').length;
+            // 获取页面上被选中的商品的数目
+            var checked_len = $('.article_list_body').find(':checked').length;
+            var is_checked = true;
+            if (checked_len < all_len) {
+                is_checked = false;
+            }
+            $('.article_form_title').find(':checkbox').prop('checked', is_checked);
+            // 更新页面的信息
+            update_page_info();
+        });
+
+    </script>
 {% endblock %}

@@ -9,7 +9,7 @@ import os
 
 class BlogMarkdown(BaseModel):
     user = models.ForeignKey(User, verbose_name='作者', on_delete=models.CASCADE)
-    title = models.CharField(max_length=30, verbose_name='标题')
+    title = models.CharField(max_length=30, null=True, blank=True, verbose_name='标题')
     article = models.TextField(verbose_name='文章')
 
     def __str__(self):
@@ -24,7 +24,7 @@ class BlogMarkdown(BaseModel):
 
 class BlogHtml(BaseModel):
     user = models.ForeignKey(User, verbose_name='作者', on_delete=models.CASCADE)
-    title = models.CharField(max_length=30, verbose_name='标题')
+    title = models.CharField(max_length=30, null=True, blank=True, verbose_name='标题')
     article = models.TextField(verbose_name='文章')
     markdown = models.OneToOneField(BlogMarkdown, verbose_name='markdown文章ID', on_delete=models.CASCADE)
 
@@ -41,7 +41,7 @@ class BlogHtml(BaseModel):
 class BlogImage(BaseModel):
     user = models.ForeignKey(User, verbose_name='作者', on_delete=models.CASCADE)
     article = models.ForeignKey(BlogMarkdown, null=True, blank=True, verbose_name='所属文章', on_delete=models.CASCADE)
-    title = models.CharField(max_length=30, verbose_name='描述')
+    title = models.CharField(max_length=30, null=True, blank=True, verbose_name='描述')
     image = models.ImageField(upload_to='image', verbose_name='图片')
 
     def __str__(self):
@@ -55,15 +55,15 @@ class BlogImage(BaseModel):
 
 # 用于在删除数据表里的记录时，同步删除文件
 # 使用信号触发
-def delete_image_file(sender, **kwargs):
-    patch = kwargs['instance']
-    os.remove(patch.image.path)
+# def delete_image_file(sender, **kwargs):
+#     patch = kwargs['instance']
+#     os.remove(patch.image.path)
 
 
-def delete_markdown_file(sender, **kwargs):
-    patch = kwargs['instance']
-    os.remove(patch.article.path)
+# def delete_markdown_file(sender, **kwargs):
+#     patch = kwargs['instance']
+#     os.remove(patch.article.path)
 
 
-post_delete.connect(delete_image_file, sender=BlogImage)
-post_delete.connect(delete_markdown_file, sender=BlogMarkdown)
+# post_delete.connect(delete_image_file, sender=BlogImage)
+# post_delete.connect(delete_markdown_file, sender=BlogMarkdown)

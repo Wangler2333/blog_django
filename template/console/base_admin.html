@@ -15,7 +15,7 @@
     <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
     <link rel="stylesheet" href="{% static 'console/css/amazeui.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'console/css/admin.css' %}">
-
+    <script src="{% static 'console/js/jquery.min.js' %}"></script>
     {% block link %}
     {% endblock %}
 
@@ -79,8 +79,9 @@
     <p class="am-padding-left">© 2018 AllMobilize, Inc. Licensed under MIT license. <a
             href="#" target="_blank">liduo</a></p>
 </footer>
-<script src="{% static 'console/js/jquery.min.js' %}"></script>
 <script src="{% static 'console/js/amazeui.min.js' %}"></script>
 <script src="{% static 'console/js/app.js' %}"></script>
+{% block script %}
+{% endblock %}
 </body>
 </html>
