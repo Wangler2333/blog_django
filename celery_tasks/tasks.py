@@ -5,11 +5,11 @@ from django.core.mail import send_mail
 app = Celery('celery_tasks.tasks', broker='redis://:624695549@106.14.1.9:6379/8')
 
 # 在任务处理者一端加这几句
-import os
-import django
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dj_blog.settings")
-django.setup()
+# import os
+# import django
+#
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dj_blog.settings")
+# django.setup()
 
 
 @app.task

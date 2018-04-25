@@ -17,12 +17,12 @@ class User(AbstractUser, BaseModel):
 
 class UserInfo(BaseModel):
     user = models.OneToOneField(User, verbose_name='用户名', on_delete=models.CASCADE)
-    qq_id = models.CharField(max_length=15, verbose_name='QQ账号')
-    wechat_id = models.CharField(max_length=50, verbose_name='微信账号')
-    github_id = models.CharField(max_length=50, verbose_name='GitHub账号')
-    weibo_id = models.CharField(max_length=50, verbose_name='微博账号')
-    introduction = models.CharField(max_length=250, verbose_name='个人简介')
-    name = models.CharField(max_length=30, verbose_name='昵称')
+    qq_id = models.CharField(max_length=15, null=True, blank=True, verbose_name='QQ账号')
+    wechat_id = models.CharField(max_length=50, null=True, blank=True, verbose_name='微信账号')
+    github_id = models.CharField(max_length=50, null=True, blank=True, verbose_name='GitHub账号')
+    weibo_id = models.CharField(max_length=50, null=True, blank=True, verbose_name='微博账号')
+    introduction = models.CharField(max_length=250, null=True, blank=True, verbose_name='个人简介')
+    name = models.CharField(max_length=30, null=True, blank=True, verbose_name='昵称')
 
     def __str__(self):
         return self.name

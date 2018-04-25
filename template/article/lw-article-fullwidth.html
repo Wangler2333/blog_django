@@ -10,25 +10,30 @@
     <title>{{ article_html.title }} - LeeBlog</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
-    <link rel="icon" type="image/png" href="{% static 'article/' %}assets/i/favicon.png">
+    <link rel="icon" type="image/png" href="{% static 'article/assets/i/favicon.png' %}">
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="icon" sizes="192x192" href="{% static 'article/' %}assets/i/app-icon72x72@2x.png">
+    <link rel="icon" sizes="192x192" href="{% static 'article/assets/i/app-icon72x72@2x.png' %}">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
-    <link rel="apple-touch-icon-precomposed" href="{% static 'article/' %}assets/i/app-icon72x72@2x.png">
+    <link rel="apple-touch-icon-precomposed" href="{% static 'article/assets/i/app-icon72x72@2x.png' %}">
     <meta name="msapplication-TileImage" content="assets/i/app-icon72x72@2x.png">
     <meta name="msapplication-TileColor" content="#0e90d2">
-    <link rel="stylesheet" href="{% static 'article/' %}assets/css/amazeui.min.css">
-    <link rel="stylesheet" href="{% static 'article/' %}assets/css/app.css">
+    <link rel="stylesheet" href="{% static 'article/assets/css/amazeui.min.css' %}">
+    <link rel="stylesheet" href="{% static 'article/assets/css/app.css' %}">
+    {# markdown-body区域的css样式 #}
+    <link rel="stylesheet" href="{% static 'article/markdown/markdown-body.css' %}">
+    {# highlight.js代码高亮 #}
+    <link rel="stylesheet" href="{% static 'article/markdown/styles/github.css' %}">
+    <script src="{% static 'article/markdown/highlight.pack.js' %}"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 </head>
 
-<body id="blog-article-sidebar">
+<body id="blog">
 <!-- header start -->
 <header class="am-g am-g-fixed blog-fixed blog-text-center blog-header">
     <div class="am-u-sm-8 am-u-sm-centered">
         <img width="200" src="http://s.amazeui.org/media/i/brand/amazeui-b.png" alt="Amaze UI Logo"/>
-{#        <h2 class="am-hide-sm-only"></h2>#}
     </div>
 </header>
 <!-- header end -->
@@ -40,13 +45,14 @@
             data-am-collapse="{target: '#blog-collapse'}"><span class="am-sr-only">导航切换</span> <span
             class="am-icon-bars"></span></button>
 
-    <div class="am-collapse am-topbar-collapse" id="blog-collapse">
+    <div class="am-collapse am-topbar-collapse">
         <ul class="am-nav am-nav-pills am-topbar-nav">
             <li><a href="/index/">首页</a></li>
             <li><a href="lw-img.html">图片库</a></li>
             <li><a href="{% url 'console:table' %}">个人中心</a></li>
             <li><a href="lw-timeline.html">注销:{{ userinfo.name }}</a></li>
         </ul>
+        {# 搜索表单提交 #}
         <form class="am-topbar-form am-topbar-right am-form-inline" role="search">
             <div class="am-form-group">
                 <input type="text" class="am-form-field am-input-sm" placeholder="搜索">
@@ -69,8 +75,9 @@
                 </p>
             </div>
             <div class="am-u-lg-4 am-u-md-5 am-u-sm-7 am-u-sm-centered blog-text-center">
-                <span class="am-icon-tags"> &nbsp;</span><a href="#">标签</a> , <a href="#">TAG</a> , <a
-                    href="#">啦啦</a>
+                <span class="am-icon-tags"> &nbsp;</span>
+                {# 文章标签 #}
+                <a href="#">标签</a> , <a href="#">TAG</a> , <a href="#">啦啦</a>
                 <hr>
             </div>
             <div class="markdown-body">
@@ -78,16 +85,14 @@
             </div>
         </article>
 
-        <div class="am-u-lg-4 am-u-md-5 am-u-sm-7 am-u-sm-centered blog-text-center">
-            <a href=""><span class="am-icon-qq am-icon-fw am-primary blog-icon"></span></a>
-            <a href=""><span class="am-icon-wechat am-icon-fw blog-icon"></span></a>
-            <a href=""><span class="am-icon-weibo am-icon-fw blog-icon"></span></a>
-        </div>
+        {#<div class="am-u-lg-4 am-u-md-5 am-u-sm-7 am-u-sm-centered blog-text-center">#}
+        {# 联系作者 #}
+        {#<a href=""><span class="am-icon-qq am-icon-fw am-primary blog-icon"></span></a>#}
+        {#<a href=""><span class="am-icon-wechat am-icon-fw blog-icon"></span></a>#}
+        {#<a href=""><span class="am-icon-weibo am-icon-fw blog-icon"></span></a>#}
+        {#</div>#}
         <hr>
         <div class="am-g blog-author blog-article-margin">
-            <div class="am-u-sm-3 am-u-md-3 am-u-lg-2">
-                <img src="assets/i/f15.jpg" alt="" class="blog-author-img am-circle">
-            </div>
             <div class="am-u-sm-9 am-u-md-9 am-u-lg-10">
                 <h3><span>作者 &nbsp;: &nbsp;</span><span
                         class="blog-color">{{ article_html.user }} | {{ userinfo.name }}</span></h3>
@@ -95,13 +100,14 @@
             </div>
         </div>
         <hr>
+        {# 页码的ul #}
         <ul class="am-pagination blog-article-margin">
             <li class="am-pagination-prev"><a href="#" class="">&laquo; 一切的回顾</a></li>
             <li class="am-pagination-next"><a href="">不远的未来 &raquo;</a></li>
         </ul>
 
         <hr>
-
+        {# 发表评论form #}
         <form class="am-form am-g">
             <h3 class="blog-comment">评论</h3>
             <fieldset>
@@ -163,7 +169,9 @@
             </p>
         </div>
     </div>
-    <div class="blog-text-center">© 2015 AllMobilize, Inc. Licensed under MIT license. Made with love By LWXYFER</div>
+    <div class="blog-text-center">© 2015 AllMobilize, Inc. Licensed under MIT license. Made with love By
+        LWXYFER
+    </div>
 </footer>
 
 

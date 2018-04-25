@@ -114,25 +114,32 @@ MEDIA_URL = '/media/'
 # 添加media文件夹
 MEDIA_DIR = os.path.join(BASE_DIR, 'media')
 MEDIA_ROOT = MEDIA_DIR
-
+####################################################
+# 自定义User模型类设置
 # 继承重写User模型类时，指定自定义的模型类，'app名字.类名'
 AUTH_USER_MODEL = 'blog_sign.User'
-
+####################################################
+# login_required装饰器设置
 # 配置登录界面，供登录验证装饰器login_required使用
 LOGIN_URL = '/sign/login'
-
+####################################################
+# 邮件设置
 # 发送邮件配置
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# 使用ssl加密方式
+EMAIL_USE_SSL = True
 # smpt服务地址
 EMAIL_HOST = 'smtp.163.com'
-EMAIL_PORT = 25
+# 使用ssl的smtp端口465，非ssl端口25
+EMAIL_PORT = 465
 # 发送邮件的邮箱
 EMAIL_HOST_USER = 'liduo945@163.com'
 # 在邮箱中设置的客户端授权密码
 EMAIL_HOST_PASSWORD = 'liduo945163'
 # 收件人看到的发件人
 EMAIL_FROM = 'LeeBlog<liduo945@163.com>'
-
+####################################################
+# Redis缓存设置
 # Django的缓存配置
 CACHES = {
     "default": {
@@ -147,3 +154,14 @@ CACHES = {
 # 配置session存储
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
+####################################################
+# FastDFS分布式文件存储系统设置
+# 设置Django的文件存储类
+DEFAULT_FILE_STORAGE = 'utils.fdfs.storage.FDFSStorage'
+
+# 设置fdfs使用的client.conf文件路径
+FDFS_CLIENT_CONF = os.path.join(BASE_DIR, 'dj_blog/client.conf')
+
+# 设置fdfs存储服务器上nginx的IP和端口号
+FDFS_URL = 'http://106.14.1.9/'
+####################################################
