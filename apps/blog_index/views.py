@@ -7,7 +7,10 @@ from apps.blog_sign.models import User
 
 # Create your views here.
 def index(request):
-    return render(request, 'index/lw-index-noslider-b.html')
+    user_login = request.user
+    if user_login.is_authenticated():
+        return redirect('/index/%s' % user_login.id)
+    return redirect('sign:login')
 
 
 def user_index(request, user_id):
@@ -26,5 +29,5 @@ def user_index(request, user_id):
         user_info = dict()
         user_info['name'] = '没有名字...'
         user_info['introduction'] = '还没有介绍自己...'
-    articles_html = user.bloghtml_set.all().order_by('-create_time')
+    articles_html = BlogHtml.objects.filter(user=user).order_by('-create_time')
     return render(request, 'index/lw-index-noslider.html', {'articles_html': articles_html, 'user_info': user_info})

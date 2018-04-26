@@ -7,10 +7,14 @@ import os
 
 # Create your models here.
 
+class BlogArticleId(BaseModel):
+    user = models.ForeignKey(User, verbose_name='作者', on_delete=models.CASCADE)
+
+
 class BlogMarkdown(BaseModel):
     user = models.ForeignKey(User, verbose_name='作者', on_delete=models.CASCADE)
     title = models.CharField(max_length=30, null=True, blank=True, verbose_name='标题')
-    article = models.TextField(verbose_name='文章')
+    article = models.TextField(null=True, blank=True, verbose_name='文章')
 
     def __str__(self):
         s = '【' + str(self.user_id) + '】' + self.title
@@ -51,7 +55,6 @@ class BlogImage(BaseModel):
         db_table = 'blog_image'
         verbose_name = '图片列表'
         verbose_name_plural = verbose_name
-
 
 # 用于在删除数据表里的记录时，同步删除文件
 # 使用信号触发

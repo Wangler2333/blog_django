@@ -5,22 +5,37 @@
     <link rel="stylesheet" href="{% static 'markdown_editor/css/editormd.css' %}"/>
     <script src="{% static 'markdown_editor/js/editormd.min.js' %}"></script>
     <script type="text/javascript">
-        function login() {
-            $.ajax({
-                type: "POST",
-                dataType: "json",
-                url: "{% url 'console:form' %}",
-                data: $('#markdown_form').serialize(),
-                success: function (result) {
-                    if (result.resultCode == 200) {
-                        alert("保存成功！");
+        $(document).ready(function () {
+            $('#button_form').find('button').click(function () {
+                var json_data = $('#markdown_form').serialize();
+                json_data = "button_name=" + $(this).prop('name') + "&" + json_data;
+                console.log(json_data);
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "{% url 'console:form' %}",
+                    data: json_data,
+                    success: function (result) {
+                        if (result.resultCode == 200) {
+                            alert("保存成功！");
+                        }
+                        else if (result.resultCode == 304) {
+                            alert("已发布！");
+                            window.location.href = "{% url 'index:index' %}";
+                        }
+                        else if (result.resultCode == 501) {
+                            alert("请输入标题")
+                        }
+                        else if (result.resultCode == 502) {
+                            alert("请输入内容")
+                        }
+                    },
+                    error: function () {
+                        alert("保存异常！");
                     }
-                },
-                error: function () {
-                    alert("保存异常！");
-                }
+                });
             });
-        }
+        });
     </script>
 {% endblock %}
 {% block content %}
@@ -28,11 +43,11 @@
     <div class="markdown-content am-form am-form-horizontal">
         <form id="markdown_form" method="post" action="{% url 'console:form' %}">
             {% csrf_token %}
-            <div class="am-margin">
-                <button type="submit" name="submit" value="True"
+            <div class="am-margin" id="button_form">
+                <button type="button" name="submit" value="True"
                         class="am-btn am-btn-primary am-btn-xs">发布
                 </button>
-                <button type="button" onclick="login()" name="save" value="True"
+                <button type="button" name="save" value="True"
                         class="am-btn am-btn-primary am-btn-xs">保存
                 </button>
                 <input type="text" name="title" placeholder="请输入标题（30字以内）">

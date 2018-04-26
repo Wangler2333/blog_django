@@ -50,7 +50,7 @@
             <li><a href="/index/">首页</a></li>
             <li><a href="lw-img.html">图片库</a></li>
             <li><a href="{% url 'console:table' %}">个人中心</a></li>
-            <li><a href="lw-timeline.html">注销:{{ userinfo.name }}</a></li>
+{#            <li><a href="lw-timeline.html">注销:{{ userinfo.name }}</a></li>#}
         </ul>
         {# 搜索表单提交 #}
         <form class="am-topbar-form am-topbar-right am-form-inline" role="search">
@@ -99,38 +99,38 @@
                 <p>{{ userinfo.introduction }}</p>
             </div>
         </div>
-        <hr>
+{#        <hr>#}
         {# 页码的ul #}
-        <ul class="am-pagination blog-article-margin">
-            <li class="am-pagination-prev"><a href="#" class="">&laquo; 一切的回顾</a></li>
-            <li class="am-pagination-next"><a href="">不远的未来 &raquo;</a></li>
-        </ul>
+{#        <ul class="am-pagination blog-article-margin">#}
+{#            <li class="am-pagination-prev"><a href="#" class="">&laquo; 一切的回顾</a></li>#}
+{#            <li class="am-pagination-next"><a href="">不远的未来 &raquo;</a></li>#}
+{#        </ul>#}
 
-        <hr>
+{#        <hr>#}
         {# 发表评论form #}
-        <form class="am-form am-g">
-            <h3 class="blog-comment">评论</h3>
-            <fieldset>
-                <div class="am-form-group am-u-sm-4 blog-clear-left">
-                    <input type="text" class="" placeholder="名字">
-                </div>
-                <div class="am-form-group am-u-sm-4">
-                    <input type="email" class="" placeholder="邮箱">
-                </div>
-
-                <div class="am-form-group am-u-sm-4 blog-clear-right">
-                    <input type="password" class="" placeholder="网站">
-                </div>
-
-                <div class="am-form-group">
-                    <textarea class="" rows="5" placeholder="一字千金"></textarea>
-                </div>
-
-                <p>
-                    <button type="submit" class="am-btn am-btn-default">发表评论</button>
-                </p>
-            </fieldset>
-        </form>
+{#        <form class="am-form am-g">#}
+{#            <h3 class="blog-comment">评论</h3>#}
+{#            <fieldset>#}
+{#                <div class="am-form-group am-u-sm-4 blog-clear-left">#}
+{#                    <input type="text" class="" placeholder="名字">#}
+{#                </div>#}
+{#                <div class="am-form-group am-u-sm-4">#}
+{#                    <input type="email" class="" placeholder="邮箱">#}
+{#                </div>#}
+{##}
+{#                <div class="am-form-group am-u-sm-4 blog-clear-right">#}
+{#                    <input type="password" class="" placeholder="网站">#}
+{#                </div>#}
+{##}
+{#                <div class="am-form-group">#}
+{#                    <textarea class="" rows="5" placeholder="一字千金"></textarea>#}
+{#                </div>#}
+{##}
+{#                <p>#}
+{#                    <button type="submit" class="am-btn am-btn-default">发表评论</button>#}
+{#                </p>#}
+{#            </fieldset>#}
+{#        </form>#}
 
         <hr>
     </div>

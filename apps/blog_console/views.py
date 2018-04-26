@@ -5,7 +5,7 @@ import json
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest, JsonResponse, Http404
 from django.views.generic import View
-from apps.blog_console.models import BlogMarkdown, BlogHtml, BlogImage
+from apps.blog_console.models import BlogMarkdown, BlogHtml, BlogImage, BlogArticleId
 from django.contrib.auth.decorators import login_required
 from utils.mixin import LoginRequiredMixin
 from django.db.models import Max
@@ -32,9 +32,15 @@ def gallery(request):
     return render(request, 'console/admin-gallery.html')
 
 
-@login_required
-def table(request):
-    return render(request, 'console/admin-table.html')
+class TableView(LoginRequiredMixin, View):
+    def get(self, request):
+        login_user = request.user
+        user_markdown = BlogMarkdown.objects.filter(user=login_user, is_delete=False)
+        return render(request, 'console/admin-table.html', {'markdowns': user_markdown, 'num': 1})
+
+    def post(self, request):
+        post = request.POST
+        print(post['value'])
 
 
 def save_markdown(article_id, title, markdown_doc, user_login):
@@ -74,15 +80,13 @@ def article_image(article_id, html_code, user_login):
 
 class FormView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest):
-        # 新建一个文章编号，暂定使用blog_markdown表的id作为article_id
-        max_id = BlogMarkdown.objects.all().aggregate(Max('id'))
-
-        # {'id__max':int}格式数据
-        if max_id['id__max'] is None:
-            max_id['id__max'] = 0
+        # 新建一个article_id用于标识文章的唯一性
+        blog_article_id = BlogArticleId()
+        blog_article_id.user = request.user
+        blog_article_id.save()
+        article_id = blog_article_id.id
 
         # 新创建一个article_id，并记录进session
-        article_id = max_id['id__max'] + 1
         request.session['article_id'] = article_id
 
         # 返回请求页面
@@ -99,21 +103,29 @@ class FormView(LoginRequiredMixin, View):
             raise Http404("请通过用户中心创建文章")
 
         # 获取POST提交的数据
-        submit = request.POST.get('submit')
+        button_name = request.POST.get('button_name')
         title = request.POST.get('title')
         html_code = request.POST.get('test-editormd-html-code')
         markdown_doc = request.POST.get('test-editormd-markdown-doc')
 
+        if not title:
+            return JsonResponse({'resultCode': 501})
+
+        if not html_code:
+            return JsonResponse({'resultCode': 502})
+
         # 如果有submit键，则为发布内容
-        if submit:
+        if button_name == 'submit':
             save_markdown(article_id, title, markdown_doc, user_login)
             save_html(article_id, title, html_code, user_login)
             article_image(article_id, html_code, user_login)
-            return HttpResponse('已发布')
+            return JsonResponse({'resultCode': 304})
         # 若没有submit键，则为保存内容
-        else:
+        if button_name == 'save':
             json_response = save_markdown(article_id, title, markdown_doc, user_login)
             return json_response
+        else:
+            return Http404("没有这个功能")
 
 
 @login_required

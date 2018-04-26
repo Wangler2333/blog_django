@@ -76,7 +76,7 @@ class LoginView(View):
         # return redirect(reverse('index:index'))
 
         # 供系统login_required装饰器使用
-        next_url = request.GET.get(key='next', default=reverse('index:index'))
+        next_url = request.GET.get(key='next', default='/')
         return redirect(next_url)
 
 

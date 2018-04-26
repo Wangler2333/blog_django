@@ -19,15 +19,15 @@ def article_id(request, article):
         article_html = BlogHtml.objects.get(markdown_id=article)
     except:
         raise Http404("文章不存在")
-    user_articles = article_html.user.bloghtml_set.order_by('markdown_id')
-    try:
-        article_prev = user_articles.filter(markdown_id__lt=article).order_by('-markdown_id')[0]
-    except:
-        article_prev = None
-    try:
-        article_next = user_articles.filter(markdown_id__gt=article)[0]
-    except:
-        article_next = None
+    # user_articles = article_html.user.bloghtml_set.order_by('markdown_id')
+    # try:
+    #     article_prev = user_articles.filter(markdown_id__lt=article).order_by('-markdown_id')[0]
+    # except:
+    #     article_prev = None
+    # try:
+    #     article_next = user_articles.filter(markdown_id__gt=article)[0]
+    # except:
+    #     article_next = None
     try:
         user_info = article_html.user.userinfo
     except:
