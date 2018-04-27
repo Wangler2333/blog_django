@@ -49,7 +49,7 @@
             </li>
             <li><a href="{% url 'console:table' %}"><span class="am-icon-table"></span> 文章列表</a></li>
             <li><a href="{% url 'console:form' %}"><span class="am-icon-pencil-square-o"></span> Markdown编辑器</a></li>
-            <li><a href="#"><span class="am-icon-sign-out"></span> 注销</a></li>
+            <li><a href="#"><span class="{% url 'sign:logout' %}"></span> 注销</a></li>
             <!--end sidebar_to_top-->
         </ul>
     </div>

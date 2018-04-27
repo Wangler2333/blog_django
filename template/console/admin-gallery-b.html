@@ -1,0 +1,44 @@
+{% extends 'console/base_admin.html' %}
+{% block title %}后台管理-相册页面{% endblock %}
+{% block content %}
+    <!-- content start -->
+    {% load staticfiles %}
+    <div class="admin-content">
+
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">相册</strong> /
+                <small>Gallery</small>
+            </div>
+        </div>
+
+        <ul class="am-avg-sm-2 am-avg-md-4 am-avg-lg-6 am-margin gallery-list">
+            {% for image in images %}
+            <li>
+                <a href="#">
+                    <img class="am-img-thumbnail am-img-bdrs"
+                         src="{{ image.image.url }}"
+                         alt="{{ image.title }}"/>
+                    <div class="gallery-title">{{ image.title }}</div>
+                    <span class="gallery-desc">{{ image.update_time }} &nbsp;&nbsp;<input type="checkbox" checked="true">展示?</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <div class="am-margin am-cf">
+            <hr/>
+            <p class="am-fl">共 15 条记录</p>
+            <ol class="am-pagination am-fr">
+                <li class="am-disabled"><a href="#">&laquo;</a></li>
+                <li class="am-active"><a href="#">1</a></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">4</a></li>
+                <li><a href="#">5</a></li>
+                <li><a href="#">&raquo;</a></li>
+            </ol>
+        </div>
+
+    </div>
+    <!-- content end -->
+{% endblock %}

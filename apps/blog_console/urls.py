@@ -2,7 +2,7 @@ from django.conf.urls import url
 from apps.blog_console import views
 
 urlpatterns = [
-    url(r'^user$', views.user, name='user'),
+    url(r'^user$', views.UserView.as_view(), name='user'),
     url(r'^help$', views.help, name='help'),
     url(r'^gallery$', views.gallery, name='gallery'),
     url(r'^table$', views.TableView.as_view(), name='table'),

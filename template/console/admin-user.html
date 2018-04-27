@@ -1,5 +1,33 @@
 {% extends 'console/base_admin.html' %}
 {% block title %}后台管理-个人信息{% endblock %}
+{% block link %}
+    <script>
+        $(document).ready(function () {
+            $('.button_form').click(function () {
+                var $button = $(this);
+                $button.button('loading');
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: '{% url 'console:user' %}',
+                    data: $('.user_info_form').serialize(),
+                    success: function (result) {
+                        if (result.resultCode == 200) {
+                            alert()
+                        }
+                        if (result.resultCode == 201) {
+
+                        }
+                        $button.button('reset');
+                    },
+                    error: function () {
+                        $button.button('reset');
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
 {% block content %}
     <!-- content start -->
     <div class="admin-content">
@@ -59,11 +87,13 @@
             </div>
 
             <div class="am-u-sm-12 am-u-md-8 am-u-md-pull-4">
-                <form class="am-form am-form-horizontal">
+                <form class="user_info_form am-form am-form-horizontal">
+                    {% csrf_token %}
                     <div class="am-form-group">
                         <label for="user-name" class="am-u-sm-3 am-form-label">姓名 / Name</label>
                         <div class="am-u-sm-9">
-                            <input type="text" id="user-name" placeholder="姓名 / Name">
+                            <input type="text" name="user-name" maxlength="30" placeholder="姓名 / Name"
+                                   value="{{ user_info.name }}">
                             <small>输入你的名字，让我们记住你。</small>
                         </div>
                     </div>
@@ -71,42 +101,50 @@
                     <div class="am-form-group">
                         <label for="user-QQ" class="am-u-sm-3 am-form-label">QQ</label>
                         <div class="am-u-sm-9">
-                            <input type="email" id="user-QQ" placeholder="输入你的QQ号码">
+                            <input type="email" name="user-qq" maxlength="15" placeholder="输入你的QQ号码"
+                                   value="{{ user_info.qq_id }}">
                         </div>
                     </div>
 
                     <div class="am-form-group">
                         <label for="user-github" class="am-u-sm-3 am-form-label">GitHub</label>
                         <div class="am-u-sm-9">
-                            <input type="email" id="user-github" placeholder="输入你的GitHub账号 / GitHub">
+                            <input type="email" name="user-github" maxlength="50" placeholder="输入你的GitHub账号 / GitHub"
+                                   value="{{ user_info.github_id }}">
                         </div>
                     </div>
 
                     <div class="am-form-group">
                         <label for="user-wechat" class="am-u-sm-3 am-form-label">微信 / WeChat</label>
                         <div class="am-u-sm-9">
-                            <input type="email" id="user-wechat" placeholder="输入你的微信账号 / WeChat">
+                            <input type="email" name="user-wechat" maxlength="50" placeholder="输入你的微信账号 / WeChat"
+                                   value="{{ user_info.wechat_id }}">
                         </div>
                     </div>
 
                     <div class="am-form-group">
-                        <label for="user-weibo" class="am-u-sm-3 am-form-label">微博 / Twitter</label>
+                        <label for="user-weibo" class="am-u-sm-3 am-form-label">微博 / WeiBo</label>
                         <div class="am-u-sm-9">
-                            <input type="email" id="user-weibo" placeholder="输入你的微博 / Twitter">
+                            <input type="email" name="user-weibo" maxlength="50" placeholder="输入你的微博 / WeiBo"
+                                   value="{{ user_info.weibo_id }}">
                         </div>
                     </div>
 
                     <div class="am-form-group">
                         <label for="user-intro" class="am-u-sm-3 am-form-label">简介 / Intro</label>
                         <div class="am-u-sm-9">
-                            <textarea class="" rows="5" id="user-intro" placeholder="输入个人简介"></textarea>
+                            <textarea name="user-intro" class="" rows="5" id="user-intro" maxlength="250"
+                                      placeholder="输入个人简介">{{ user_info.introduction }}</textarea>
                             <small>250字以内写出你的一生...</small>
                         </div>
                     </div>
 
                     <div class="am-form-group">
                         <div class="am-u-sm-9 am-u-sm-push-3">
-                            <button type="button" class="am-btn am-btn-primary">保存修改</button>
+                            <button type="button"
+                                    class="button_form am-btn am-btn-primary am-btn-default btn-loading-example">
+                                保存修改
+                            </button>
                         </div>
                     </div>
                 </form>

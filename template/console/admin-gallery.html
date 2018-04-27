@@ -1,44 +1,177 @@
 {% extends 'console/base_admin.html' %}
-{% block title %}后台管理-相册页面{% endblock %}
+{% block title %}后台管理-文章列表{% endblock %}
+{% block link %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("button").click(function () {
+                var $button = $(this);
+                $button.button('loading');
+                var name = $button.prop('name');
+                var value = $button.prop('value');
+                var csrf = $('input[name="csrfmiddlewaretoken"]').prop('value');
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "{% url 'console:gallery' %}",
+                    data: {'csrfmiddlewaretoken': csrf, 'name': name, 'value': value},
+                    success: function (result) {
+                        if (result.resultCode == 200) {
+                        }
+                        $button.button('reset');
+                    },
+                    error: function () {
+                        $button.button('reset');
+                    }
+                });
+            });
+
+            // 文章的全选和全不选
+            $('.article_form_title').find(':checkbox').change(function () {
+                var select_check = '';
+                // 获取全选的checkbox的选中状态
+                var is_checked = $(this).prop('checked');
+                // 遍历商品的对应的checkbox，设置这些checkbox的选中状态和全选的checkbox保持一致
+                $('.article_list_body').find(':checkbox').each(function () {
+                    $(this).prop('checked', is_checked);
+                });
+                $('.article_list_body').find(':checked').each(function () {
+                    select_check = $(this).prop('name') + ',' + select_check
+                });
+                $('button[name="delete_select"]').prop('value', select_check);
+                $('button[name="set_select"]').prop('value', select_check);
+            });
+
+            // 文章对应的checkbox状态发生改变时，设置全选checkbox的状态
+            $('.article_list_body').find(':checkbox').change(function () {
+                var select_check = '';
+                // 获取页面上所有商品的数目
+                var all = $('.article_list_body').find(':checkbox');
+                // 获取页面上被选中的商品的数目
+                var checked = $('.article_list_body').find(':checked');
+                var is_checked = true;
+                if (checked.length < all.length) {
+                    is_checked = false;
+                }
+                checked.each(function () {
+                    select_check = $(this).prop('name') + ',' + select_check
+                });
+                $('button[name="delete_select"]').prop('value', select_check);
+                $('button[name="set_select"]').prop('value', select_check);
+                $('.article_form_title').find(':checkbox').prop('checked', is_checked);
+            });
+        });
+    </script>
+{% endblock %}
 {% block content %}
     <!-- content start -->
     {% load staticfiles %}
+    {% csrf_token %}
+    <input type="hidden" name="select" value="">
     <div class="admin-content">
 
         <div class="am-cf am-padding">
             <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">相册</strong> /
-                <small>Gallery</small>
+                <small>Table</small>
             </div>
         </div>
 
-        <ul class="am-avg-sm-2 am-avg-md-4 am-avg-lg-6 am-margin gallery-list">
-
-            <li>
-                <a href="#">
-                    <img class="am-img-thumbnail am-img-bdrs"
-                         src="http://cn.bing.com/az/hprichv/LondonTrainStation_GettyRR_139321755_ZH-CN742316019.jpg"
-                         alt=""/>
-                    <div class="gallery-title">远方 有一个地方 那里种有我们的梦想</div>
-                    <span class="gallery-desc">2375-09-26 &nbsp;&nbsp;<input type="checkbox">展示?</span>
-                </a>
-            </li>
-
-        </ul>
-
-        <div class="am-margin am-cf">
-            <hr/>
-            <p class="am-fl">共 15 条记录</p>
-            <ol class="am-pagination am-fr">
-                <li class="am-disabled"><a href="#">&laquo;</a></li>
-                <li class="am-active"><a href="#">1</a></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#">4</a></li>
-                <li><a href="#">5</a></li>
-                <li><a href="#">&raquo;</a></li>
-            </ol>
+        <div class="am-g">
+            <div class="am-u-md-6 am-cf">
+                <div class="am-fl am-cf">
+                    <div class="am-btn-toolbar am-fl">
+                        <div class="am-btn-group am-btn-group-xs">
+                            <button type="button" name="new" value="" class="am-btn am-btn-default btn-loading-example"><span
+                                    class="am-icon-plus"></span><span class="button_text"> 新增</span>
+                            </button>
+                            <button type="button" name="delete_select" value=""
+                                    class="am-btn am-btn-default btn-loading-example"><span
+                                    class="am-icon-trash-o"></span><span class="button_text"> 删除</span>
+                            </button>
+                            <button type="button" name="set_select" value=""
+                                    class="am-btn am-btn-default btn-loading-example"><span
+                                    class="am-icon-pencil-square-o"></span><span class="button_text"> 切换状态</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="am-u-md-3 am-cf">
+                <div class="am-fr">
+                    <div class="am-input-group am-input-group-sm">
+                        <input type="text" class="am-form-field">
+                        <span class="am-input-group-btn">
+                  <button class="am-btn am-btn-default" type="button">搜索</button>
+                </span>
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <div class="am-g">
+            <div class="am-u-sm-12">
+                <form class="am-form">
+                    <table class="am-table am-table-striped am-table-hover table-main">
+                        <thead class="article_form_title">
+                        <tr>
+                            <th class="table-check"><input name="check_all" type="checkbox"/></th>
+                            <th class="table-id">ID</th>
+                            <th class="table-title">标题</th>
+                            <th class="table-status">状态</th>
+                            <th class="table-author">所属文章</th>
+                            <th class="table-date">上传日期</th>
+                            <th class="table-set">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody class="article_list_body">
+                        {% for image in images %}
+                            <tr>
+                                <td><input name="{{ image.id }}" type="checkbox"/></td>
+                                <td>{{ forloop.counter }}</td>
+                                <td><a href="/image/{{ image.id }}">{{ image.title }}</a></td>
+                                <td>{% if image.is_show %}已展示
+                                {% else %}未展示
+                                {% endif %}</td>
+                                <td>{{ image.article }}</td>
+                                <td>{{ image.update_time }}</td>
+                                <td>
+                                    <div class="am-btn-toolbar">
+                                        <div class="am-btn-group am-btn-group-xs">
+                                            <button type="button" name="edit" value="{{ image.id }}"
+                                                    class="am-btn am-btn-default am-btn-xs am-text-secondary btn-loading-example"><span
+                                                    class="am-icon-pencil-square-o"></span><span
+                                                    class="button_text"> 编辑</span>
+                                            </button>
+                                            <button type="button" name="delete" value="{{ image.id }}"
+                                                    class="am-btn am-btn-default am-btn-xs am-text-danger btn-loading-example"><span
+                                                    class="am-icon-trash-o"></span><span class="button_text"> 删除</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="am-cf">
+                        共 {{ images.count }} 条记录
+                        <div class="am-fr">
+                            <ul class="am-pagination">
+                                <li class="am-disabled"><a href="#">«</a></li>
+                                <li class="am-active"><a href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                                <li><a href="#">4</a></li>
+                                <li><a href="#">5</a></li>
+                                <li><a href="#">»</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <hr/>
+                    <p>注：.....</p>
+                </form>
+            </div>
+
+        </div>
     </div>
     <!-- content end -->
 {% endblock %}

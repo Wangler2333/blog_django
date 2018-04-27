@@ -29,5 +29,5 @@ def user_index(request, user_id):
         user_info = dict()
         user_info['name'] = '没有名字...'
         user_info['introduction'] = '还没有介绍自己...'
-    articles_html = BlogHtml.objects.filter(user=user).order_by('-create_time')
+    articles_html = BlogHtml.objects.filter(user=user, is_delete=False, is_show=True).order_by('-update_time')
     return render(request, 'index/lw-index-noslider.html', {'articles_html': articles_html, 'user_info': user_info})

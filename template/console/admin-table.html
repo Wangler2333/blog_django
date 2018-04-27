@@ -3,9 +3,11 @@
 {% block link %}
     <script type="text/javascript">
         $(document).ready(function () {
-            $("button").click(function () {
-                var name = $(this).prop('name');
-                var value = $(this).prop('value')
+            $(".button_ajax").click(function () {
+                var $button = $(this);
+                $button.button('loading');
+                var name = $button.prop('name');
+                var value = $button.prop('value');
                 var csrf = $('input[name="csrfmiddlewaretoken"]').prop('value');
                 $.ajax({
                     type: "POST",
@@ -14,11 +16,21 @@
                     data: {'csrfmiddlewaretoken': csrf, 'name': name, 'value': value},
                     success: function (result) {
                         if (result.resultCode == 200) {
-                            alert(text + ":成功！");
+                            $.each(result.li_list, function (index, value) {
+                                var li_name = '#' + value;
+                                $(li_name).remove();
+                                window.location.reload();
+                            });
                         }
+                        if (result.resultCode == 201) {
+                            var li_name = '#' + result.li_list;
+                            $(li_name).remove();
+                            window.location.reload();
+                        }
+                        $button.button('reset');
                     },
                     error: function () {
-                        alert(text + ":异常！");
+                        $button.button('reset');
                     }
                 });
             });
@@ -76,10 +88,11 @@
                 <div class="am-fl am-cf">
                     <div class="am-btn-toolbar am-fl">
                         <div class="am-btn-group am-btn-group-xs">
-                            <button type="button" name="new" value="" class="am-btn am-btn-default"><span
+                            <a href="{% url 'console:form' %}" class="am-btn am-btn-default btn-loading-example"><span
                                     class="am-icon-plus"></span><span class="button_text"> 新增</span>
-                            </button>
-                            <button type="button" name="delete_select" value="" class="am-btn am-btn-default"><span
+                            </a>
+                            <button type="button" name="delete_select" value=""
+                                    class="button_ajax am-btn am-btn-default btn-loading-example"><span
                                     class="am-icon-trash-o"></span><span class="button_text"> 删除</span>
                             </button>
                         </div>
@@ -107,6 +120,7 @@
                             <th class="table-check"><input name="check_all" type="checkbox"/></th>
                             <th class="table-id">ID</th>
                             <th class="table-title">标题</th>
+                            <th class="table-status">状态</th>
                             <th class="table-author">作者</th>
                             <th class="table-date">修改日期</th>
                             <th class="table-set">操作</th>
@@ -114,21 +128,24 @@
                         </thead>
                         <tbody class="article_list_body">
                         {% for markdown in markdowns %}
-                            <tr>
+                            <tr id="{{ markdown.id }}">
                                 <td><input name="{{ markdown.id }}" type="checkbox"/></td>
                                 <td>{{ forloop.counter }}</td>
                                 <td><a href="/article/{{ markdown.id }}">{{ markdown.title }}</a></td>
+                                <td>{% if markdown.bloghtml.is_show %}已发布{% else %}草稿
+                                {% endif %}</td>
                                 <td>{{ markdown.user }}</td>
                                 <td>{{ markdown.update_time }}</td>
                                 <td>
                                     <div class="am-btn-toolbar">
                                         <div class="am-btn-group am-btn-group-xs">
-                                            <button type="button" name="edit" value="{{ markdown.id }}"
-                                                    class="am-btn am-btn-default am-btn-xs am-text-secondary"><span
-                                                    class="am-icon-pencil-square-o"></span><span class="button_text"> 编辑</span>
+                                            <button type="submit" name="edit" value="{{ markdown.id }}"
+                                                    class="am-btn am-btn-default am-btn-xs am-text-secondary btn-loading-example"><span
+                                                    class="am-icon-pencil-square-o"></span><span
+                                                    class="button_text"> 编辑</span>
                                             </button>
                                             <button type="button" name="delete" value="{{ markdown.id }}"
-                                                    class="am-btn am-btn-default am-btn-xs am-text-danger"><span
+                                                    class="button_ajax am-btn am-btn-default am-btn-xs am-text-danger btn-loading-example"><span
                                                     class="am-icon-trash-o"></span><span class="button_text"> 删除</span>
                                             </button>
                                         </div>

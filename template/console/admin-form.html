@@ -7,6 +7,8 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('#button_form').find('button').click(function () {
+                var $button = $(this);
+                $button.button('loading');
                 var json_data = $('#markdown_form').serialize();
                 json_data = "button_name=" + $(this).prop('name') + "&" + json_data;
                 console.log(json_data);
@@ -17,21 +19,30 @@
                     data: json_data,
                     success: function (result) {
                         if (result.resultCode == 200) {
-                            alert("保存成功！");
+                            {#保存成功#}
+                            $('#my-modal-save').modal('close');
                         }
                         else if (result.resultCode == 304) {
-                            alert("已发布！");
-                            window.location.href = "{% url 'index:index' %}";
+                            {#发布成功#}
+                            window.location.href = "{% if markdown %}{% url 'console:table' %}{% else %}/article/{{ article_id }}{% endif %}";
                         }
                         else if (result.resultCode == 501) {
-                            alert("请输入标题")
+                            alert('请输入标题！');
+                            $('#my-modal-save').modal('close');
+                            $('#my-modal-submit').modal('close');
                         }
                         else if (result.resultCode == 502) {
-                            alert("请输入内容")
+                            alert('请输入文章内容！');
+                            $('#my-modal-save').modal('close');
+                            $('#my-modal-submit').modal('close');
                         }
+                        $button.button('reset');
                     },
                     error: function () {
                         alert("保存异常！");
+                        $('#my-modal-save').modal('close');
+                        $('#my-modal-submit').modal('close');
+                        $button.button('reset');
                     }
                 });
             });
@@ -40,21 +51,39 @@
 {% endblock %}
 {% block content %}
     <!-- content start -->
+    <div class="am-modal am-modal-loading am-modal-no-btn" tabindex="-1" id="my-modal-submit">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">正在发布...</div>
+            <div class="am-modal-bd">
+                <span class="am-icon-spinner am-icon-spin"></span>
+            </div>
+        </div>
+    </div>
+    <div class="am-modal am-modal-loading am-modal-no-btn" tabindex="-1" id="my-modal-save">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">正在保存...</div>
+            <div class="am-modal-bd">
+                <span class="am-icon-spinner am-icon-spin"></span>
+            </div>
+        </div>
+    </div>
     <div class="markdown-content am-form am-form-horizontal">
         <form id="markdown_form" method="post" action="{% url 'console:form' %}">
             {% csrf_token %}
             <div class="am-margin" id="button_form">
-                <button type="button" name="submit" value="True"
-                        class="am-btn am-btn-primary am-btn-xs">发布
+                <button type="button" name="submit" value="True" class="am-btn am-btn-success am-btn-xs"
+                        data-am-modal="{target: '#my-modal-submit'}">
+                    发布
                 </button>
-                <button type="button" name="save" value="True"
-                        class="am-btn am-btn-primary am-btn-xs">保存
+                <button type="button" name="save" value="True" class="am-btn am-btn-primary am-btn-xs"
+                        data-am-modal="{target: '#my-modal-save'}">
+                    保存
                 </button>
-                <input type="text" name="title" placeholder="请输入标题（30字以内）">
+                <input type="text" name="title" placeholder="请输入标题（30字以内）" value="{{ markdown.title }}">
             </div>
 
             <div id="test-editormd">
-                <textarea style="display:none;"></textarea>
+                <textarea style="display:none;">{{ markdown.article }}</textarea>
             </div>
         </form>
         {% load staticfiles %}

@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.views.generic import View
 from django.http import HttpRequest, HttpResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from apps.blog_sign.models import User
+from django.contrib.auth.decorators import login_required
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired
 from dj_blog import settings
@@ -173,3 +174,8 @@ class ForgetView(View):
 
     def get(self, request: HttpRequest):
         return render(request, 'sign/lw-forget.html')
+
+
+def user_logout(request):
+    logout(request)
+    return redirect(reverse('sign:login'))
