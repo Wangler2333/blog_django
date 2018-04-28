@@ -7,9 +7,6 @@ import os
 
 # Create your models here.
 
-class BlogArticleId(BaseModel):
-    user = models.ForeignKey(User, verbose_name='作者', on_delete=models.CASCADE)
-
 
 class BlogMarkdown(BaseModel):
     user = models.ForeignKey(User, verbose_name='作者', on_delete=models.CASCADE)
@@ -57,6 +54,28 @@ class BlogImage(BaseModel):
     class Meta:
         db_table = 'blog_image'
         verbose_name = '图片列表'
+        verbose_name_plural = verbose_name
+
+
+class BlogArticleId(BaseModel):
+    user = models.ForeignKey(User, verbose_name='作者', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'blog_article_id'
+        verbose_name = '文章id分配暂存'
+        verbose_name_plural = verbose_name
+
+
+class BlogImageThumbs(BaseModel):
+    image = models.OneToOneField(BlogImage, verbose_name='原图')
+    image_thumb = models.ImageField(upload_to='image', verbose_name='缩略图')
+
+    def __str__(self):
+        return self.image
+
+    class Meta:
+        db_table = 'blog_image_thumbs'
+        verbose_name = '缩略图列表'
         verbose_name_plural = verbose_name
 
 # 用于在删除数据表里的记录时，同步删除文件

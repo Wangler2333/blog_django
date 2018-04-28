@@ -5,13 +5,16 @@ import json
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest, JsonResponse, Http404
 from django.views.generic import View
-from apps.blog_console.models import BlogMarkdown, BlogHtml, BlogImage, BlogArticleId
+from apps.blog_console.models import BlogMarkdown, BlogHtml, BlogImage, BlogArticleId, BlogImageThumbs
 from apps.blog_sign.models import UserInfo
 from django.contrib.auth.decorators import login_required
 from utils.mixin import LoginRequiredMixin
 from django.db.models import Max
 from dj_blog import settings
 from fdfs_client.client import Fdfs_client
+from PIL import ImageFile, Image, ImageDraw
+from django.utils.six import BytesIO
+import copy
 import re
 
 
@@ -63,7 +66,7 @@ def help(request):
 def gallery(request):
     login_user = request.user
     user_images = BlogImage.objects.filter(user=login_user, is_delete=False).order_by('-update_time')
-    return render(request, 'console/admin-gallery.html', {'images': user_images})
+    return render(request, 'console/admin-gallery-b.html', {'images': user_images})
 
 
 class TableView(LoginRequiredMixin, View):
@@ -172,6 +175,13 @@ def save_html(article_id, title, html_code, user_login):
 
 
 def article_image(article_id, html_code, user_login):
+    """
+    由于标记图片所属文章
+    :param article_id:
+    :param html_code:
+    :param user_login:
+    :return:
+    """
     images = re.findall(r'\"%s(.+?)\"' % settings.FDFS_URL, html_code)
     for image_name in images:
         blog_images = BlogImage.objects.filter(image=image_name, user=user_login)
@@ -230,6 +240,62 @@ class FormView(LoginRequiredMixin, View):
             return Http404("没有这个功能")
 
 
+def thumbnail_img(img):
+    """
+    对图片进行压缩处理，得到缩略图
+    :param img: Django的File文件
+    :return: BytesIO的内存数据，file-like object
+    """
+    # 创建BytesIO对象
+    image_file = BytesIO()
+
+    # 读取img数据，生成Pillow图片对象
+    p = ImageFile.Parser()
+    p.feed(img.read())
+    image = p.close()
+
+    # 获取原图宽高
+    width = image.width
+    height = image.height
+
+    # 设置最大宽高
+    max_len = 360
+
+    if width <= max_len and height <= max_len:
+        pass
+    else:
+        if width >= height:
+            height_image = max_len / width * height
+            image.thumbnail((max_len, height_image), Image.ANTIALIAS)
+        if width < height:
+            width_image = max_len / height * width
+            image.thumbnail((width_image, max_len), Image.ANTIALIAS)
+
+    # # 根据图像大小设置压缩率
+    # if width >= 2000 or height >= 2000:
+    #     rate = 0.04
+    # elif width >= 1000 or height >= 1000:
+    #     rate = 0.08
+    # elif width >= 500 or height >= 500:
+    #     rate = 0.16
+    # elif width >= 200 or height >= 200:
+    #     rate = 0.4
+    # elif width >= 80 or height >= 80:
+    #     rate = 0.9
+    # else:
+    #     rate = 1
+    # rate = rate * 4
+    #
+    # width = int(width * rate)  # 新的宽
+    # height = int(height * rate)  # 新的高
+    #
+    # image.thumbnail((width, height), Image.ANTIALIAS)  # 生成缩略图
+
+    image.save(image_file, 'png')  # 保存到内存
+
+    return image_file
+
+
 @login_required
 def upload_image(request):
     # 请求方法为POST时，进行处理
@@ -237,10 +303,15 @@ def upload_image(request):
 
         # 获取上传的文件，如果没有文件，则默认为None
         pic = request.FILES.get("editormd-image-file", None)
+
+        # 对pic的保存，消耗了其数据，所以需要做一份拷贝
+        img = copy.deepcopy(pic)
+
         # pic = request.FILES['editormd-image-file']
         if not pic:
             return JsonResponse({'success': 0, 'message': 'upload image failed'})
 
+        #####################################保存原图
         # 创建图片模型类对象
         # image字段保存图片使用指定的storage方法，上传到FastDFS
         image = BlogImage()
@@ -248,6 +319,28 @@ def upload_image(request):
         image.title = pic.name
         image.image = pic
         image.save()
+        #####################################保存缩略图
+        # 调用Pillow模块生成缩略图，得到BytesIO()对象
+        image_file = thumbnail_img(img)
+        # 读取BytesIO数据
+        image_thumbnail = image_file.getvalue()
+        image_file.close()
 
+        # 创建一个Fdfs_client对象
+        client = Fdfs_client(settings.FDFS_CLIENT_CONF)
+
+        # 上传数据到fast dfs系统中
+        res = client.upload_by_buffer(image_thumbnail)
+        if res.get('Status') != 'Upload successed.':
+            # 上传失败
+            raise Exception('上传文件到fast dfs失败')
+        # 获取返回的文件ID
+        filename = res.get('Remote file_id')
+
+        image_thumb = BlogImageThumbs()
+        image_thumb.image = image
+        image_thumb.image_thumb = filename
+        image_thumb.save()
+        #####################################
         return JsonResponse({'success': 1, 'message': 'upload image successed',
                              'url': image.image.url})
