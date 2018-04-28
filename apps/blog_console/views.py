@@ -241,39 +241,13 @@ def upload_image(request):
         if not pic:
             return JsonResponse({'success': 0, 'message': 'upload image failed'})
 
-        # 创建一个Fdfs_client对象
-        client = Fdfs_client(settings.FDFS_CLIENT_CONF)
-
-        # 上传文件到fast dfs系统中
-        res = client.upload_by_buffer(pic.read())
-
-        # dict
-        # {
-        #     'Group name': group_name,
-        #     'Remote file_id': remote_file_id,
-        #     'Status': 'Upload successed.',
-        #     'Local file name': '',
-        #     'Uploaded size': upload_size,
-        #     'Storage IP': storage_ip
-        # }
-        if res.get('Status') != 'Upload successed.':
-            # 上传失败
-            raise Exception('上传文件到fast dfs失败')
-
-        # 获取返回的文件ID
-        filename = res.get('Remote file_id')
-
-        # 将上传的图片相关数据存入数据库
-        blog_image = BlogImage()
-        # 路径
-        blog_image.image = filename
-        # 图片名字
-        blog_image.title = pic.name
-        # 所属人员
-        blog_image.user = request.user
-        blog_image.save()
-
-        print(blog_image.image.url)
+        # 创建图片模型类对象
+        # image字段保存图片使用指定的storage方法，上传到FastDFS
+        image = BlogImage()
+        image.user = request.user
+        image.title = pic.name
+        image.image = pic
+        image.save()
 
         return JsonResponse({'success': 1, 'message': 'upload image successed',
-                             'url': settings.FDFS_URL + filename})
+                             'url': image.image.url})

@@ -29,6 +29,7 @@
     </script>
 {% endblock %}
 {% block content %}
+    {% load gravatar %}
     <!-- content start -->
     <div class="admin-content">
         <div class="am-cf am-padding">
@@ -47,7 +48,7 @@
                         <div class="am-g">
                             <div class="am-u-md-4">
                                 <img class="am-img-circle am-img-thumbnail"
-                                     src="http://amui.qiniudn.com/bw-2014-06-19.jpg?imageView/1/w/1000/h/1000/q/80"
+                                     src="{{ user_info.user.username|gravatar_get_image }}"
                                      alt=""/>
                             </div>
                             <div class="am-u-md-8">
