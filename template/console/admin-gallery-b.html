@@ -15,9 +15,15 @@
             data-am-gallery="{pureview:{target: 'a'}}">
             {% for image in images %}
                 <li>
-                    <div class="am-gallery-item">
+                    <div class="am-gallery-item" style="height: 200px">
                         <a href="{{ image.image.url }}" title="{{ image.title }}">
-                            <img src="{{ image.blogimagethumbs.image_thumb.url }}" style="max-width: 100%;max-height: 100%" alt="{{ image.title }}"/>
+                                <img src="{{ image.blogimagethumbs.image_thumb.url }}"
+                                     style="{% if image.blogimagethumbs.erect %}
+                                         {#height: 100%;width: auto;#}
+                                     {% else %}
+                                         {#width: 100%;#}
+                                     {% endif %}"
+                                     alt="{{ image.title }}"/>
                             <h3 class="am-gallery-title">{{ image.title }}</h3>
                             <div class="am-gallery-desc">{{ image.create_time }}</div>
                         </a>
@@ -26,21 +32,21 @@
             {% endfor %}
         </ul>
 
-{#        <ul class="am-avg-sm-2 am-avg-md-4 am-avg-lg-6 am-margin gallery-list">#}
-{#            {% for image in images %}#}
-{#                <li>#}
-{#                    <a href="#">#}
-{#                        <img class="am-img-thumbnail am-img-bdrs"#}
-{#                             src="{{ image.blogimagethumbs }}"#}
-{#                             alt="{{ image.title }}"#}
-{#                             data-rel="https://farm4.staticflickr.com/3835/15329524682_554d4c0886_k.jpg"/>#}
-{#                        <div class="gallery-title">{{ image.title }}</div>#}
-{#                        <span class="gallery-desc">{{ image.update_time }} &nbsp;&nbsp;<input type="checkbox"#}
-{#                                                                                              checked="true">展示?</span>#}
-{#                    </a>#}
-{#                </li>#}
-{#            {% endfor %}#}
-{#        </ul>#}
+        {#        <ul class="am-avg-sm-2 am-avg-md-4 am-avg-lg-6 am-margin gallery-list">#}
+        {#            {% for image in images %}#}
+        {#                <li>#}
+        {#                    <a href="#">#}
+        {#                        <img class="am-img-thumbnail am-img-bdrs"#}
+        {#                             src="{{ image.blogimagethumbs }}"#}
+        {#                             alt="{{ image.title }}"#}
+        {#                             data-rel="https://farm4.staticflickr.com/3835/15329524682_554d4c0886_k.jpg"/>#}
+        {#                        <div class="gallery-title">{{ image.title }}</div>#}
+        {#                        <span class="gallery-desc">{{ image.update_time }} &nbsp;&nbsp;<input type="checkbox"#}
+        {#                                                                                              checked="true">展示?</span>#}
+        {#                    </a>#}
+        {#                </li>#}
+        {#            {% endfor %}#}
+        {#        </ul>#}
 
         <div class="am-margin am-cf">
             <hr/>

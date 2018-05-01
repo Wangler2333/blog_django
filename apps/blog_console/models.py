@@ -69,6 +69,9 @@ class BlogArticleId(BaseModel):
 class BlogImageThumbs(BaseModel):
     image = models.OneToOneField(BlogImage, verbose_name='原图')
     image_thumb = models.ImageField(upload_to='image', verbose_name='缩略图')
+    width = models.IntegerField(verbose_name='宽度')
+    height = models.IntegerField(verbose_name='高度')
+    erect = models.BooleanField(verbose_name='是否竖向')
 
     def __str__(self):
         return self.image

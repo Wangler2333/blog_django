@@ -62,11 +62,80 @@ def help(request):
     return render(request, 'console/admin-help.html')
 
 
-@login_required
-def gallery(request):
-    login_user = request.user
-    user_images = BlogImage.objects.filter(user=login_user, is_delete=False).order_by('-update_time')
-    return render(request, 'console/admin-gallery-b.html', {'images': user_images})
+class GalleryView(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest):
+        login_user = request.user
+        user_images = BlogImage.objects.filter(user=login_user, is_delete=False).order_by('-update_time')
+        return render(request, 'console/admin-gallery.html', {'images': user_images})
+
+    def post(self, request: HttpRequest):
+        post = request.POST
+        post_name = post.get(key='name', default=None)
+        post_value = post.get(key='value', default=None)
+        post_title = post.get(key='title', default=None)
+        post_show = post.get(key='show', default=None)
+        post_image_id = post.get(key='image_id', default=None)
+
+        # 如果是多选删除按钮
+        if post_name == 'delete_select':
+
+            # 切割str数据为列表，最后一个为空，舍弃
+            values = post_value.split(',')[:-1]
+
+            # 新建一个列表保存删除的markdown的id
+            li_list = list()
+            for value in values:
+                # 逐条获取markdown对象并删除
+                image = BlogImage.objects.get(id=value)
+                # 由于模型类设置了on_delete=models.CASCADE，则其外键BlogHtml相关数据一起删除
+                image.delete()
+                li_list.append(value)
+
+            # 将li_list列表传回ajax作为数组，供其删除相应元素
+            return JsonResponse({'resultCode': 200, 'li_list': li_list})
+
+        # 如果是单个删除按钮
+        if post_name == 'delete':
+            # 过程同上
+            value = post_value
+            image = BlogImage.objects.get(id=value)
+            image.delete()
+            return JsonResponse({'resultCode': 201, 'li_list': value})
+
+        if post_name == 'set_select':
+
+            # 切割str数据为列表，最后一个为空，舍弃
+            values = post_value.split(',')[:-1]
+
+            # 新建一个列表保存删除的markdown的id
+            true_list = list()
+            false_list = list()
+            for value in values:
+                # 逐条获取markdown对象并删除
+                image = BlogImage.objects.get(id=value)
+                if image.is_show:
+                    image.is_show = False
+                    false_list.append(value)
+                else:
+                    image.is_show = True
+                    true_list.append(value)
+                image.save()
+
+            # 将li_list列表传回ajax作为数组，供其删除相应元素
+            return JsonResponse({'resultCode': 202, 'true_list': true_list, 'false_list': false_list})
+
+        # 如果是弹出框发来的请求
+        if post_image_id:
+            image = BlogImage.objects.get(id=post_image_id)
+            if post_title:
+                image.title = post_title
+            if post_show:
+                image.is_show = True
+            else:
+                image.is_show = False
+            image.save()
+            return JsonResponse({'resultCode': 200, 'id': post_image_id, 'title': post_title, 'show': post_show})
+        print(post)
 
 
 class TableView(LoginRequiredMixin, View):
@@ -92,8 +161,8 @@ class TableView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest):
         # 获取post传来的数据
         post = request.POST
-        post_name = post['name']
-        post_value = post['value']
+        post_name = post.get(key='name', default=None)
+        post_value = post.get(key='value', default=None)
 
         # 如果是多选删除按钮
         if post_name == 'delete_select':
@@ -259,41 +328,23 @@ def thumbnail_img(img):
     height = image.height
 
     # 设置最大宽高
-    max_len = 360
+    max_len = 300
 
+    # 图片缩放
     if width <= max_len and height <= max_len:
         pass
     else:
         if width >= height:
-            height_image = max_len / width * height
+            height_image = max_len * height // width
             image.thumbnail((max_len, height_image), Image.ANTIALIAS)
         if width < height:
-            width_image = max_len / height * width
+            width_image = max_len * width // height
             image.thumbnail((width_image, max_len), Image.ANTIALIAS)
 
-    # # 根据图像大小设置压缩率
-    # if width >= 2000 or height >= 2000:
-    #     rate = 0.04
-    # elif width >= 1000 or height >= 1000:
-    #     rate = 0.08
-    # elif width >= 500 or height >= 500:
-    #     rate = 0.16
-    # elif width >= 200 or height >= 200:
-    #     rate = 0.4
-    # elif width >= 80 or height >= 80:
-    #     rate = 0.9
-    # else:
-    #     rate = 1
-    # rate = rate * 4
-    #
-    # width = int(width * rate)  # 新的宽
-    # height = int(height * rate)  # 新的高
-    #
-    # image.thumbnail((width, height), Image.ANTIALIAS)  # 生成缩略图
-
+    # 图片保存
     image.save(image_file, 'png')  # 保存到内存
 
-    return image_file
+    return image_file, image.size
 
 
 @login_required
@@ -304,8 +355,8 @@ def upload_image(request):
         # 获取上传的文件，如果没有文件，则默认为None
         pic = request.FILES.get("editormd-image-file", None)
 
-        # 对pic的保存，消耗了其数据，所以需要做一份拷贝
-        img = copy.deepcopy(pic)
+        # # 对pic的保存，消耗了其数据，所以需要做一份拷贝
+        # img = copy.deepcopy(pic)
 
         # pic = request.FILES['editormd-image-file']
         if not pic:
@@ -319,28 +370,30 @@ def upload_image(request):
         image.title = pic.name
         image.image = pic
         image.save()
-        #####################################保存缩略图
-        # 调用Pillow模块生成缩略图，得到BytesIO()对象
-        image_file = thumbnail_img(img)
-        # 读取BytesIO数据
-        image_thumbnail = image_file.getvalue()
-        image_file.close()
-
-        # 创建一个Fdfs_client对象
-        client = Fdfs_client(settings.FDFS_CLIENT_CONF)
-
-        # 上传数据到fast dfs系统中
-        res = client.upload_by_buffer(image_thumbnail)
-        if res.get('Status') != 'Upload successed.':
-            # 上传失败
-            raise Exception('上传文件到fast dfs失败')
-        # 获取返回的文件ID
-        filename = res.get('Remote file_id')
-
-        image_thumb = BlogImageThumbs()
-        image_thumb.image = image
-        image_thumb.image_thumb = filename
-        image_thumb.save()
-        #####################################
+        # #####################################保存缩略图
+        # # 调用Pillow模块生成缩略图，得到BytesIO()对象
+        # image_file, size = thumbnail_img(img)
+        # # 读取BytesIO数据
+        # image_thumbnail = image_file.getvalue()
+        # image_file.close()
+        #
+        # # 创建一个Fdfs_client对象
+        # client = Fdfs_client(settings.FDFS_CLIENT_CONF)
+        #
+        # # 上传数据到fast dfs系统中
+        # res = client.upload_by_buffer(image_thumbnail)
+        # if res.get('Status') != 'Upload successed.':
+        #     # 上传失败
+        #     raise Exception('上传文件到fast dfs失败')
+        # # 获取返回的文件ID
+        # filename = res.get('Remote file_id')
+        #
+        # image_thumb = BlogImageThumbs()
+        # image_thumb.image = image
+        # image_thumb.image_thumb = filename
+        # image_thumb.width = size[0]
+        # image_thumb.height = size[1]
+        # image_thumb.save()
+        # #####################################
         return JsonResponse({'success': 1, 'message': 'upload image successed',
                              'url': image.image.url})
