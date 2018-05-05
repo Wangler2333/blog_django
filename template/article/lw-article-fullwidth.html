@@ -10,14 +10,14 @@
     <title>{{ article_html.title }} - LeeBlog</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
-    <link rel="icon" type="image/png" href="{% static 'i/favicon.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'i/favicon.ico' %}">
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="icon" sizes="192x192" href="{% static 'i/app-icon72x72@2x.png' %}">
+    <link rel="icon" sizes="192x192" href="{% static 'i/favicon.ico' %}">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
-    <link rel="apple-touch-icon-precomposed" href="{% static 'i/app-icon72x72@2x.png' %}">
-    <meta name="msapplication-TileImage" content="assets/i/app-icon72x72@2x.png">
+    <link rel="apple-touch-icon-precomposed" href="{% static 'i/favicon.ico' %}">
+    <meta name="msapplication-TileImage" content="{% static 'i/favicon.ico' %}">
     <meta name="msapplication-TileColor" content="#0e90d2">
     <link rel="stylesheet" href="{% static 'css/amazeui.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/app.css' %}">
@@ -32,8 +32,8 @@
 <body id="blog">
 <!-- header start -->
 <header class="am-g am-g-fixed blog-fixed blog-text-center blog-header">
-    <div class="am-u-sm-8 am-u-sm-centered">
-        <img width="200" src="http://s.amazeui.org/media/i/brand/amazeui-b.png" alt="Amaze UI Logo"/>
+    <div class="am-topbar-brand">
+        <h1>LeeBlog</h1>
     </div>
 </header>
 <!-- header end -->
@@ -45,14 +45,13 @@
             data-am-collapse="{target: '#blog-collapse'}"><span class="am-sr-only">导航切换</span> <span
             class="am-icon-bars"></span></button>
 
-    <div class="am-collapse am-topbar-collapse">
+    <div class="am-collapse am-topbar-collapse" id="blog-collapse">
         <ul class="am-nav am-nav-pills am-topbar-nav">
             <li><a href="/index/">首页</a></li>
             <li><a href="lw-img.html">图片库</a></li>
             <li><a href="{% url 'console:table' %}">个人中心</a></li>
             <li><a href="{% url 'sign:logout' %}">注销</a></li>
         </ul>
-        {# 搜索表单提交 #}
         <form class="am-topbar-form am-topbar-right am-form-inline" role="search">
             <div class="am-form-group">
                 <input type="text" class="am-form-field am-input-sm" placeholder="搜索">

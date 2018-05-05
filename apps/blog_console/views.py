@@ -57,11 +57,6 @@ class UserView(LoginRequiredMixin, View):
         return JsonResponse({'resultCode': 200})
 
 
-@login_required
-def help(request):
-    return render(request, 'console/admin-help.html')
-
-
 class GalleryView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest):
         login_user = request.user
@@ -245,7 +240,7 @@ def save_html(article_id, title, html_code, user_login):
 
 def article_image(article_id, html_code, user_login):
     """
-    由于标记图片所属文章
+    用于标记图片所属文章
     :param article_id:
     :param html_code:
     :param user_login:

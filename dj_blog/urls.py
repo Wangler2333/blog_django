@@ -21,11 +21,11 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
 
     # 添加static文件夹和media文件夹的路径
-    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
-    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+    # url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
+    # url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
 
     # 设置各个APP的url路径
-    url(r'^$', include('apps.blog_index.urls')),
+    # url(r'^$', include('apps.blog_index.urls')),
     url(r'^index/', include('apps.blog_index.urls', namespace='index')),
     url(r'^sign/', include('apps.blog_sign.urls', namespace='sign')),
     url(r'^article/', include('apps.blog_article.urls', namespace='article')),

@@ -1,5 +1,6 @@
 <!doctype html>
 {% load staticfiles %}
+{% load gravatar %}
 <html>
 <head>
     <meta charset="utf-8">
@@ -7,17 +8,19 @@
     <meta name="description" content="">
     <meta name="keywords" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>BLOG | Amaze UI Examples</title>
+    <title>{% if  user_info.name %}
+        {{ user_info.name }}{% else %}{{ user_info.user.username }}
+    {% endif %} - LeeBlog</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
-    <link rel="icon" type="image/png" href="{% static 'i/favicon.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'i/favicon.ico' %}">
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="icon" sizes="192x192" href="{% static 'i/app-icon72x72@2x.png' %}">
+    <link rel="icon" sizes="192x192" href="{% static 'i/favicon.ico' %}">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
-    <link rel="apple-touch-icon-precomposed" href="{% static 'i/app-icon72x72@2x.png' %}">
-    <meta name="msapplication-TileImage" content="{% static 'i/app-icon72x72@2x.png' %}">
+    <link rel="apple-touch-icon-precomposed" href="{% static 'i/favicon.ico' %}">
+    <meta name="msapplication-TileImage" content="{% static 'i/favicon.ico' %}">
     <meta name="msapplication-TileColor" content="#0e90d2">
     <link rel="stylesheet" href="{% static 'css/amazeui.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/app.css' %}">
@@ -26,8 +29,8 @@
 <body id="blog">
 
 <header class="am-g am-g-fixed blog-fixed blog-text-center blog-header">
-    <div class="am-u-sm-8 am-u-sm-centered">
-        <img width="200" src="http://s.amazeui.org/media/i/brand/amazeui-b.png" alt="Amaze UI Logo"/>
+    <div class="am-topbar-brand">
+        <h1>LeeBlog</h1>
     </div>
 </header>
 <hr>
@@ -38,10 +41,10 @@
 
     <div class="am-collapse am-topbar-collapse" id="blog-collapse">
         <ul class="am-nav am-nav-pills am-topbar-nav">
-            <li><a href="/index/">首页</a></li>
-            <li><a href="lw-img.html">图片库</a></li>
+            <li><a href="{% url 'index:index' %}">首页</a></li>
+            <li><a href="{% url 'index:img' user_id %}">图片库</a></li>
             <li><a href="{% url 'console:table' %}">个人中心</a></li>
-            <li><a href="lw-article-fullwidth.html">注销</a></li>
+            <li><a href="{% url 'sign:logout' %}">注销</a></li>
         </ul>
         <form class="am-topbar-form am-topbar-right am-form-inline" role="search">
             <div class="am-form-group">
@@ -52,7 +55,7 @@
 </nav>
 <hr>
 
-
+{% block content %}
 <!-- content srart -->
 <div class="am-g am-g-fixed blog-fixed">
     <div class="am-u-md-8 am-u-sm-12">
@@ -83,7 +86,7 @@
     <div class="am-u-md-4 am-u-sm-12 blog-sidebar">
         <div class="blog-sidebar-widget blog-bor">
             <h2 class="blog-text-center blog-title"><span>About ME</span></h2>
-            <img src="assets/i/f14.jpg" alt="about me" class="blog-entry-img">
+            <img src="{{ user_info.user.username|gravatar_get_image }}" alt="about me" class="blog-entry-img">
             <p>{{ user_info.name }}</p>
             <p>
                 我是{{ user_info.name }}
@@ -113,17 +116,18 @@
         <div class="blog-sidebar-widget blog-bor">
             <h2 class="blog-title"><span>么么哒</span></h2>
             <ul class="am-list">
-                <li><a href="#">每个人都有一个死角， 自己走不出来，别人也闯不进去。</a></li>
-                <li><a href="#">我把最深沉的秘密放在那里。</a></li>
-                <li><a href="#">你不懂我，我不怪你。</a></li>
-                <li><a href="#">每个人都有一道伤口， 或深或浅，盖上布，以为不存在。</a></li>
+                {% for article in articles_html %}
+                    {% if  forloop.counter < 6 %}
+                        <li><a href="/article/{{ article.markdown_id }}">{{ article.title }}</a></li>
+                    {% endif %}
+                {% endfor %}
             </ul>
         </div>
     </div>
 </div>
 <!-- 右边栏 end -->
 <!-- content end -->
-
+{% endblock %}
 
 <footer class="blog-footer">
     <div class="am-g am-g-fixed blog-fixed am-u-sm-centered blog-footer-padding">
@@ -160,9 +164,9 @@
     </div>
     <div class="blog-text-center">© 2015 AllMobilize, Inc. Licensed under MIT license. Made with love By LWXYFER</div>
 </footer>
-
-
 <script src="{% static 'js/jquery.min.js' %}"></script>
 <script src="{% static 'js/amazeui.min.js' %}"></script>
+{% block js %}
+{% endblock %}
 </body>
 </html>
