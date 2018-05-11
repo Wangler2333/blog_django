@@ -1,21 +1,14 @@
-import os
-import time
-import json
-
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpRequest, JsonResponse, Http404
-from django.views.generic import View
-from apps.blog_console.models import BlogMarkdown, BlogHtml, BlogImage, BlogArticleId, BlogImageThumbs
-from apps.blog_sign.models import UserInfo
+from django.http import HttpRequest, JsonResponse, Http404
 from django.contrib.auth.decorators import login_required
+from django.views.generic import View
+from django.shortcuts import render
+from apps.blog_console.models import BlogMarkdown, BlogHtml, BlogImage, BlogArticleId
+from apps.blog_sign.models import UserInfo
 from utils.mixin import LoginRequiredMixin
-from django.db.models import Max
 from dj_blog import settings
-from fdfs_client.client import Fdfs_client
-from PIL import ImageFile, Image, ImageDraw
-from django.utils.six import BytesIO
-import copy
 import re
+# from django.utils.six import BytesIO
+# from PIL import ImageFile, Image
 
 
 # Create your views here.
@@ -23,6 +16,11 @@ import re
 
 class UserView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest):
+        """
+        回应get请求
+        :param request:
+        :return: html页面
+        """
         login_user = request.user
         # 查找登录人员的信息，并输出给模板显示
         try:
@@ -32,6 +30,11 @@ class UserView(LoginRequiredMixin, View):
         return render(request, 'console/admin-user.html', {'user_info': user_info})
 
     def post(self, request: HttpRequest):
+        """
+        回应post请求
+        :param request:
+        :return: json数据
+        """
         # 提取post传来的数据
         post = request.POST
         name = post.get('user-name', default='')
@@ -59,11 +62,21 @@ class UserView(LoginRequiredMixin, View):
 
 class GalleryView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest):
+        """
+        回应get请求
+        :param request:
+        :return: html页面
+        """
         login_user = request.user
         user_images = BlogImage.objects.filter(user=login_user, is_delete=False).order_by('-update_time')
         return render(request, 'console/admin-gallery.html', {'images': user_images})
 
     def post(self, request: HttpRequest):
+        """
+        回应post请求
+        :param request:
+        :return: json数据
+        """
         post = request.POST
         post_name = post.get(key='name', default=None)
         post_value = post.get(key='value', default=None)
@@ -130,11 +143,15 @@ class GalleryView(LoginRequiredMixin, View):
                 image.is_show = False
             image.save()
             return JsonResponse({'resultCode': 200, 'id': post_image_id, 'title': post_title, 'show': post_show})
-        print(post)
 
 
 class TableView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest):
+        """
+        回应get请求
+        :param request:
+        :return: html页面
+        """
         login_user = request.user
 
         # 区分是访问页面还是修改文章
@@ -154,6 +171,11 @@ class TableView(LoginRequiredMixin, View):
         return render(request, 'console/admin-table.html', {'markdowns': user_markdown})
 
     def post(self, request: HttpRequest):
+        """
+        回应post请求
+        :param request:
+        :return: json数据
+        """
         # 获取post传来的数据
         post = request.POST
         post_name = post.get(key='name', default=None)
@@ -304,42 +326,42 @@ class FormView(LoginRequiredMixin, View):
             return Http404("没有这个功能")
 
 
-def thumbnail_img(img):
-    """
-    对图片进行压缩处理，得到缩略图
-    :param img: Django的File文件
-    :return: BytesIO的内存数据，file-like object
-    """
-    # 创建BytesIO对象
-    image_file = BytesIO()
-
-    # 读取img数据，生成Pillow图片对象
-    p = ImageFile.Parser()
-    p.feed(img.read())
-    image = p.close()
-
-    # 获取原图宽高
-    width = image.width
-    height = image.height
-
-    # 设置最大宽高
-    max_len = 300
-
-    # 图片缩放
-    if width <= max_len and height <= max_len:
-        pass
-    else:
-        if width >= height:
-            height_image = max_len * height // width
-            image.thumbnail((max_len, height_image), Image.ANTIALIAS)
-        if width < height:
-            width_image = max_len * width // height
-            image.thumbnail((width_image, max_len), Image.ANTIALIAS)
-
-    # 图片保存
-    image.save(image_file, 'png')  # 保存到内存
-
-    return image_file, image.size
+# def thumbnail_img(img):
+#     """
+#     对图片进行压缩处理，得到缩略图
+#     :param img: Django的File文件
+#     :return: BytesIO的内存数据，file-like object
+#     """
+#     # 创建BytesIO对象
+#     image_file = BytesIO()
+#
+#     # 读取img数据，生成Pillow图片对象
+#     p = ImageFile.Parser()
+#     p.feed(img.read())
+#     image = p.close()
+#
+#     # 获取原图宽高
+#     width = image.width
+#     height = image.height
+#
+#     # 设置最大宽高
+#     max_len = 300
+#
+#     # 图片缩放
+#     if width <= max_len and height <= max_len:
+#         pass
+#     else:
+#         if width >= height:
+#             height_image = max_len * height // width
+#             image.thumbnail((max_len, height_image), Image.ANTIALIAS)
+#         if width < height:
+#             width_image = max_len * width // height
+#             image.thumbnail((width_image, max_len), Image.ANTIALIAS)
+#
+#     # 图片保存
+#     image.save(image_file, 'png')  # 保存到内存
+#
+#     return image_file, image.size
 
 
 @login_required
